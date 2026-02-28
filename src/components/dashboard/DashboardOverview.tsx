@@ -106,15 +106,15 @@ export function DashboardOverview() {
                             </div>
                         </div>
 
-                        <div className="flex items-baseline gap-2">
-                            <h2 className="text-3xl font-bold text-white tracking-tight">{kpi.value}</h2>
-                            <span className={`flex items-center text-xs font-semibold ${kpi.trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}>
-                                {kpi.trend === 'up' ? <ArrowUpRight size={14} className="mr-1" /> : <ArrowDownRight size={14} className="mr-1" />}
-                                {kpi.change}
+                        <div className="flex items-center gap-3">
+                            <h2 className="text-3xl font-bold text-white tracking-tight shrink-0">{kpi.value}</h2>
+                            <span className={`flex items-start text-xs font-semibold ${kpi.trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}>
+                                {kpi.trend === 'up' ? <ArrowUpRight size={14} className="mr-1 shrink-0 mt-0.5" /> : <ArrowDownRight size={14} className="mr-1 shrink-0 mt-0.5" />}
+                                <span className="leading-tight">{kpi.change}</span>
                             </span>
                         </div>
                         {kpi.subtext && (
-                            <div className="mt-3 text-xs text-[var(--text-muted)]">
+                            <div className="mt-3 text-xs text-[var(--text-muted)] font-medium">
                                 {kpi.subtext}
                             </div>
                         )}

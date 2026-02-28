@@ -153,25 +153,25 @@ def get_kpis_live():
         schemas.TopLevelKPIBase(
             id=1,
             label="Total Installed Capacity",
-            value=f"{scraped_data['capacity_mw']} MW",
-            change="+1.5% from last period",
+            value=f"{scraped_data['capacity_mw']:,} MW",
+            change="Verified via Official Sources",
             trend="up",
-            subtext="Verified via Official Sources"
+            subtext=""
         ),
         schemas.TopLevelKPIBase(
             id=2,
             label="Renewables Share",
             value=f"{scraped_data['renewable_percentage']}%",
-            change="+2.1% from last period",
+            change="Verified via Official Sources",
             trend="up",
-            subtext="Verified via Official Sources"
+            subtext="Target: 52% by 2030"
         ),
         schemas.TopLevelKPIBase(
             id=3,
             label="Active Projects",
-            value="14",
-            change="Stable",
-            trend="neutral",
-            subtext="Major infrastructure monitored"
+            value="$14 M",
+            change="Major infrastructure monitored",
+            trend="down",
+            subtext=""
         )
     ]
