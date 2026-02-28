@@ -110,9 +110,14 @@ export function DashboardOverview() {
                             <h2 className="text-3xl font-bold text-white tracking-tight">{kpi.value}</h2>
                             <span className={`flex items-center text-xs font-semibold ${kpi.trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}>
                                 {kpi.trend === 'up' ? <ArrowUpRight size={14} className="mr-1" /> : <ArrowDownRight size={14} className="mr-1" />}
-                                {kpi.subtext}
+                                {kpi.change}
                             </span>
                         </div>
+                        {kpi.subtext && (
+                            <div className="mt-3 text-xs text-[var(--text-muted)]">
+                                {kpi.subtext}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
