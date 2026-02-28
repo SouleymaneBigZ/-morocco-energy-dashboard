@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 import database
 import models
 import schemas
@@ -25,9 +26,31 @@ def read_root():
 
 @app.get("/api/projects", response_model=List[schemas.ProjectBase])
 def get_projects(db: Session = Depends(database.get_db)):
-    # Returns all projects
-    projects = db.query(models.Project).all()
-    return projects
+    # Returns all projects with manually extracted coordinates from PostGIS
+    projects = db.query(
+        models.Project.id,
+        models.Project.name,
+        models.Project.type,
+        models.Project.capacity_mw,
+        models.Project.location_name,
+        models.Project.status,
+        func.ST_Y(models.Project.geom).label('latitude'),
+        func.ST_X(models.Project.geom).label('longitude')
+    ).all()
+    
+    # Convert Row objects to dictionaries to match the Pydantic schema
+    return [
+        schemas.ProjectBase(
+            id=p.id,
+            name=p.name,
+            type=p.type,
+            capacity_mw=p.capacity_mw,
+            location_name=p.location_name,
+            status=p.status,
+            latitude=p.latitude,
+            longitude=p.longitude
+        ) for p in projects
+    ]
 
 @app.get("/api/market-data", response_model=List[schemas.MarketDataBase])
 def get_market_data(db: Session = Depends(database.get_db)):

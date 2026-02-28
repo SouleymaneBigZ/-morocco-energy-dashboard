@@ -8,7 +8,8 @@ import {
     Settings,
     Zap,
     Briefcase,
-    FileText
+    FileText,
+    ShoppingCart
 } from "lucide-react";
 
 export function Sidebar() {
@@ -19,13 +20,13 @@ export function Sidebar() {
         { label: "Projects Map", icon: Map, href: "/projects" },
         { label: "Financials", icon: Briefcase, href: "/financials" },
         { label: "Regulations", icon: FileText, href: "/regulations" },
-        { label: "Market Evaluation", icon: BarChart3, href: "/market" },
+        { label: "Market Evaluation", icon: ShoppingCart, href: "/market" },
     ];
 
     return (
         <aside className="w-64 glass-panel border-l-0 border-y-0 border-r border-[var(--surface-border)] hidden md:flex flex-col h-screen sticky top-0">
             <div className="p-6 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <div className="w-10 h-10 rounded-xl bg-[var(--primary)] flex items-center justify-center shadow-lg shadow-emerald-500/20">
                     <Zap className="text-white w-6 h-6" />
                 </div>
                 <div>
@@ -49,7 +50,7 @@ export function Sidebar() {
                                 : "text-slate-400 hover:text-white hover:bg-slate-800/40"
                                 }`}
                         >
-                            <Icon className={`w-5 h-5 ${isActive ? "text-emerald-400" : ""}`} />
+                            <Icon className="w-5 h-5 text-emerald-400" />
                             <span className="font-medium text-sm">{item.label}</span>
                             {isActive && (
                                 <div className="ml-auto w-1.5 h-4 rounded-full bg-emerald-400"></div>

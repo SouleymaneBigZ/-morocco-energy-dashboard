@@ -42,17 +42,7 @@ export function ProjectsMap() {
         return () => clearInterval(interval);
     }, [isLiveSyncEnabled]);
 
-    // Actual geographic coordinates [longitude, latitude] for the cities
-    const getCoordinates = (location: string): [number, number] => {
-        switch (location.toLowerCase()) {
-            case "ouarzazate": return [-6.9118, 30.9335];
-            case "tarfaya": return [-12.9248, 27.9392];
-            case "midelt": return [-4.7397, 32.6844];
-            case "boujdour": return [-14.4831, 26.1264];
-            case "agadir": return [-9.5981, 30.4202];
-            default: return [-7.0, 31.0];
-        }
-    };
+    // We now receive [longitude, latitude] directly from the backend
 
     const getIcon = (type: string) => {
         switch (type) {
@@ -128,8 +118,8 @@ export function ProjectsMap() {
 
                                 {/* Plotting Projects */}
                                 {keyProjects.map((project) => {
-                                    const coordinates = getCoordinates(project.location_name);
-                                    const isSelected = selectedProject.id === project.id;
+                                    const coordinates = [project.longitude, project.latitude];
+                                    const isSelected = selectedProject && selectedProject.id === project.id;
 
                                     return (
                                         <Marker key={project.id} coordinates={coordinates as [number, number]}>

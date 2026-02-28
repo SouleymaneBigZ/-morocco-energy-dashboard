@@ -113,7 +113,7 @@ export function MarketEvaluationDashboard() {
                     </p>
                 </div>
 
-                {/* Retail Price Snapshot */}
+                {/* ANRE Tariffs & Retail Price Snapshot */}
                 <div className="glass-panel p-6 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <DollarSign size={120} />
@@ -121,33 +121,42 @@ export function MarketEvaluationDashboard() {
 
                     <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
                         <span className="w-1 h-6 rounded-full bg-emerald-500"></span>
-                        Electricity End-User Prices (2024/2025)
+                        Tarification & Accès Réseau (ANRE)
                     </h3>
 
                     <div className="space-y-6 mt-8">
                         <div>
                             <div className="flex justify-between text-sm mb-2">
-                                <span className="text-[var(--text-muted)]">Residential Average</span>
-                                <span className="text-white font-bold">{latestData.residential_price} MAD / kWh</span>
+                                <span className="text-[var(--text-muted)]">Prix Résidentiel Moyen (2025)</span>
+                                <span className="text-white font-bold">{latestData.residential_price} DH / kWh</span>
                             </div>
                             <div className="w-full bg-[var(--surface)] rounded-full h-2">
                                 <div className="bg-blue-400 h-2 rounded-full" style={{ width: '60%' }}></div>
                             </div>
                         </div>
 
-                        <div>
-                            <div className="flex justify-between text-sm mb-2">
-                                <span className="text-[var(--text-muted)]">Industrial Average</span>
-                                <span className="text-white font-bold">{latestData.industrial_price} MAD / kWh</span>
+                        <div className="grid grid-cols-2 gap-4 mt-4">
+                            <div className="bg-[var(--surface)] border border-[var(--surface-border)] rounded-lg p-3">
+                                <p className="text-xs text-[var(--text-muted)] mb-1">TURT (Transport)</p>
+                                <p className="text-sm text-white font-bold">{latestData.turt_price} DH/kWh</p>
                             </div>
-                            <div className="w-full bg-[var(--surface)] rounded-full h-2">
-                                <div className="bg-amber-400 h-2 rounded-full" style={{ width: '55%' }}></div>
+                            <div className="bg-[var(--surface)] border border-[var(--surface-border)] rounded-lg p-3">
+                                <p className="text-xs text-[var(--text-muted)] mb-1">TURD (Distribution)</p>
+                                <p className="text-sm text-white font-bold">{latestData.turd_price} DH/kWh</p>
+                            </div>
+                            <div className="bg-[var(--surface)] border border-[var(--surface-border)] rounded-lg p-3">
+                                <p className="text-xs text-[var(--text-muted)] mb-1">TSS (Système)</p>
+                                <p className="text-sm text-white font-bold">{latestData.tss_price} DH/kWh</p>
+                            </div>
+                            <div className="bg-[var(--surface)] border border-emerald-500/20 rounded-lg p-3">
+                                <p className="text-xs text-emerald-400 mb-1">Excédent Renouv. (Pointe)</p>
+                                <p className="text-sm text-emerald-500 font-bold">{latestData.excedent_pointe_price} DH/kWh</p>
                             </div>
                         </div>
 
                         <div className="mt-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
                             <p className="text-xs text-orange-400 leading-relaxed">
-                                Note: Prices reflect recent subsidy adjustments. The new <b>Law 82-21</b> on self-generation allows industries to bypass grid costs by generating their own solar energy (up to 5MW easily), creating a massive market opportunity.
+                                Note: Prices reflect ANRE directives. Objective is to reduce global costs from 0.9 to 0.6 DH/kWh over 20 years via liberalization and fossil contract cancellations. The new <b>Law 82-21</b> on self-generation allows industries to bypass grid costs by generating their own solar energy.
                             </p>
                         </div>
                     </div>
@@ -197,6 +206,13 @@ export function MarketEvaluationDashboard() {
                         </div>
                     ))}
                 </div>
+            </div>
+
+            {/* Sources Methodology */}
+            <div className="mt-8 pt-6 border-t border-[var(--surface-border)]">
+                <p className="text-xs text-[var(--text-muted)] text-center leading-relaxed">
+                    <b>Méthode d'évaluation / Sources Principales:</b> Données tarifaires et réglementaires extraites des publications officielles de l'ANRE (Autorité Nationale de Régulation de l'Électricité), de l'ONEE et du MEM. Analyses de marché et données LCOE basées sur les rapports de l'IMAL, Energy Partnership, et GlobalPetrolPrices.
+                </p>
             </div>
 
         </div>

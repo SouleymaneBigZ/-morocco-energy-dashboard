@@ -9,6 +9,10 @@ with engine.connect() as conn:
     conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
     conn.commit()
 
+# Drop the MarketData table explicitly so it is recreated with the new columns
+MarketData.__table__.drop(engine, checkfirst=True)
+ReformTracker.__table__.drop(engine, checkfirst=True)
+
 # Create tables
 Base.metadata.create_all(bind=engine)
 
@@ -27,9 +31,14 @@ if db.query(Project).count() == 0:
 
 if db.query(MarketData).count() == 0:
     data = MarketData(
-        year=2024,
-        residential_price=1.17,
+        year=2025,
+        residential_price=1.28, # Updated to user provided metric
         industrial_price=1.07,
+        turt_price=0.0685,
+        turd_price=0.0607,
+        tss_price=0.0681,
+        excedent_pointe_price=0.21,
+        excedent_hors_pointe_price=0.18,
         renewables_percentage=45.3,
         fossil_percentage=54.7,
         solar_lcoe=0.37,
@@ -41,10 +50,10 @@ if db.query(MarketData).count() == 0:
 if db.query(ReformTracker).count() == 0:
     reforms = [
         ReformTracker(reform_name="Law 82-21 (Self-Generation)", description="Enables robust self-production of electricity with grid access from 5MW and 20% surplus sales.", status="Complete", completion_percentage=100),
-        ReformTracker(reform_name="ANRE Grid Capacity Publication", description="Publication of the 10,429 MW hosting capacity for 2026-2030 to foster transparency.", status="Complete", completion_percentage=100),
-        ReformTracker(reform_name="Network Access Tariffs (Wheeling)", description="Setting clear wheeling charges for the 2024-2027 period to lower investor costs.", status="Complete", completion_percentage=100),
-        ReformTracker(reform_name="Medium-Voltage Distribution Tariffs", description="Preparing tariffs for the MV electricity distribution network.", status="In Progress", completion_percentage=75),
-        ReformTracker(reform_name="ONEE Accounting Separation", description="Separation of ONEE's accounting to ensure transmission system operator independence.", status="In Progress", completion_percentage=80)
+        ReformTracker(reform_name="Decreasing Fossil Contracts", description="Objective to cancel non-profitable fossil contracts to reduce global costs from 0.9 to 0.6 DH/kWh over 20 years.", status="In Progress", completion_percentage=35),
+        ReformTracker(reform_name="Network Access Tariffs (Wheeling)", description="Setting clear wheeling charges (TURT/TURD) for the 2024-2027 period to lower investor costs.", status="Complete", completion_percentage=100),
+        ReformTracker(reform_name="SERD Decentralized Potential", description="Targeting 66.8 TWh/year by 2035 via decentralized Wind/Solar, representing $31B investments.", status="In Progress", completion_percentage=20),
+        ReformTracker(reform_name="Liberalization of MT/BT", description="Opening of Medium/Low voltage networks following ANRE directives.", status="In Progress", completion_percentage=60)
     ]
     db.add_all(reforms)
 

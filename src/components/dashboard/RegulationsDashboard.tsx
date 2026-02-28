@@ -119,15 +119,22 @@ export function RegulationsDashboard() {
                             <li className="flex items-start gap-3">
                                 <CheckCircle2 size={18} className="text-emerald-500 mt-0.5 shrink-0" />
                                 <div>
-                                    <h5 className="text-sm font-semibold text-white">Law 13-09</h5>
-                                    <p className="text-xs text-[var(--text-muted)] mt-1">Foundation for RE development and private production.</p>
+                                    <h5 className="text-sm font-semibold text-white">Law 48-15 (ANRE)</h5>
+                                    <p className="text-xs text-[var(--text-muted)] mt-1">Established the National Electricity Regulatory Authority to regulate free market access.</p>
+                                </div>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <CheckCircle2 size={18} className="text-emerald-500 mt-0.5 shrink-0" />
+                                <div>
+                                    <h5 className="text-sm font-semibold text-white">Law 13-09 & 40-19</h5>
+                                    <p className="text-xs text-[var(--text-muted)] mt-1">Foundation for RE development opening the HT/THT grid to the private sector.</p>
                                 </div>
                             </li>
                             <li className="flex items-start gap-3">
                                 <CheckCircle2 size={18} className="text-emerald-500 mt-0.5 shrink-0" />
                                 <div>
                                     <h5 className="text-sm font-semibold text-white">Law 82-21</h5>
-                                    <p className="text-xs text-[var(--text-muted)] mt-1">Right to self-produce electricity and sell excess to the grid.</p>
+                                    <p className="text-xs text-[var(--text-muted)] mt-1">Right to self-produce electricity and sell excess to the grid (ANRE pricing).</p>
                                 </div>
                             </li>
                             <li className="flex items-start gap-3">

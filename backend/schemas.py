@@ -9,6 +9,8 @@ class ProjectBase(BaseModel):
     capacity_mw: float
     location_name: str
     status: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
     class Config:
         from_attributes = True
@@ -29,6 +31,11 @@ class MarketDataBase(BaseModel):
     year: int
     residential_price: float
     industrial_price: float
+    turt_price: Optional[float] = None
+    turd_price: Optional[float] = None
+    tss_price: Optional[float] = None
+    excedent_pointe_price: Optional[float] = None
+    excedent_hors_pointe_price: Optional[float] = None
     renewables_percentage: float
     fossil_percentage: float
     solar_lcoe: float

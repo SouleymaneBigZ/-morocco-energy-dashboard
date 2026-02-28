@@ -35,6 +35,13 @@ class MarketData(Base):
     residential_price = Column(Float)
     industrial_price = Column(Float)
     
+    # Specific ANRE tariffs in MAD/kWh
+    turt_price = Column(Float, nullable=True)
+    turd_price = Column(Float, nullable=True)
+    tss_price = Column(Float, nullable=True)
+    excedent_pointe_price = Column(Float, nullable=True)
+    excedent_hors_pointe_price = Column(Float, nullable=True)
+    
     # Capacity Mix in %
     renewables_percentage = Column(Float)
     fossil_percentage = Column(Float)
