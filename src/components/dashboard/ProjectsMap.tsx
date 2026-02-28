@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MapPin, Info, Zap, Wind, Droplets } from "lucide-react";
-import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
+import { MapPin, Info, Zap, Wind, Droplets, Activity } from "lucide-react";
+import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
 import { useSync } from "@/context/SyncContext";
 
 const geoUrl = "/world.json";
@@ -13,6 +13,9 @@ export function ProjectsMap() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedProject, setSelectedProject] = useState < any | null > (null);
     const [isLoading, setIsLoading] = useState(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [gridLines, setGridLines] = useState < any[] > ([]);
+    const [showGrid, setShowGrid] = useState(false);
     const { isLiveSyncEnabled } = useSync();
 
     useEffect(() => {
@@ -33,7 +36,22 @@ export function ProjectsMap() {
             }
         };
 
+        const fetchGridData = async () => {
+            try {
+                // Fetch the geographically combined transmission lines from our new Python backend proxy instead of local statics
+                const res = await fetch('http://localhost:8000/api/grid-data');
+
+                if (res.ok) {
+                    const gridFeatureCollection = await res.json();
+                    setGridLines(gridFeatureCollection.features || []);
+                }
+            } catch (error) {
+                console.error("Error fetching grid data:", error);
+            }
+        };
+
         fetchProjects();
+        fetchGridData();
 
         let interval: NodeJS.Timeout;
         if (isLiveSyncEnabled) {
@@ -53,13 +71,46 @@ export function ProjectsMap() {
         }
     };
 
+    const getLineColor = (legend: string) => {
+        if (!legend) return "rgba(100, 116, 139, 0.5)"; // Default gray
+        if (legend.includes("400")) return "rgba(239, 68, 68, 0.7)"; // Red for 400kV
+        if (legend.includes("225")) return "rgba(245, 158, 11, 0.7)"; // Orange for 225kV
+        if (legend.includes("60")) return "rgba(59, 130, 246, 0.6)"; // Blue for 60kV
+        return "rgba(100, 116, 139, 0.5)";
+    };
+
     return (
         <div className="space-y-6 animate-fade-in">
             {/* Header section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-1">Flagship Projects Map</h1>
-                    <p className="text-[var(--text-muted)]">Interactive map of major renewable energy installations across Morocco</p>
+                    <h1 className="text-3xl font-bold text-white mb-1">Projects & Assets</h1>
+                    <p className="text-[var(--text-muted)]">Interactive map of renewable energy installations and grid infrastructure</p>
+                </div>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => setShowGrid(!showGrid)}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors border ${showGrid
+                            ? "bg-blue-500/20 text-blue-400 border-blue-500/50 shadow-lg shadow-blue-500/20"
+                            : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--surface-border)] hover:bg-[var(--surface-hover)]"
+                            }`}
+                    >
+                        <Activity size={16} className={showGrid ? "animate-pulse" : ""} />
+                        {showGrid ? "Hide Power Grid" : "Show Power Grid"}
+                    </button>
+                    <div className="flex items-center gap-2 bg-[var(--surface)] border border-[var(--surface-border)] rounded-full px-4 py-2">
+                        {isLiveSyncEnabled ? (
+                            <>
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span className="text-sm font-medium text-emerald-400">Live API Linked</span>
+                            </>
+                        ) : (
+                            <>
+                                <span className="w-2 h-2 rounded-full bg-slate-500"></span>
+                                <span className="text-sm font-medium text-slate-400">Sync Paused</span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -93,78 +144,118 @@ export function ProjectsMap() {
                                 }}
                                 className="w-full h-full outline-none"
                             >
-                                <Geographies geography={geoUrl}>
-                                    {({ geographies }) =>
-                                        geographies.map((geo) => {
-                                            const isMorocco = geo.properties.name === "Morocco" || geo.id === "MAR" || geo.id === "ESH";
-                                            return (
-                                                <Geography
-                                                    key={geo.rsmKey}
-                                                    geography={geo}
-                                                    fill={isMorocco ? "var(--surface)" : "#070E1B"}
-                                                    stroke="var(--surface-border)"
-                                                    strokeWidth={isMorocco ? 1.5 : 0.5}
-                                                    className="outline-none"
-                                                    style={{
-                                                        default: { outline: "none" },
-                                                        hover: { outline: "none", fill: isMorocco ? "rgba(30, 41, 59, 0.8)" : "#070E1B" },
-                                                        pressed: { outline: "none" },
-                                                    }}
-                                                />
-                                            );
-                                        })
-                                    }
-                                </Geographies>
+                                <ZoomableGroup zoom={1} center={[-8, 29.5]} minZoom={1} maxZoom={5}>
+                                    <Geographies geography={geoUrl}>
+                                        {({ geographies }) =>
+                                            geographies.map((geo) => {
+                                                const isMorocco = geo.properties.name === "Morocco" || geo.id === "MAR" || geo.id === "ESH";
+                                                return (
+                                                    <Geography
+                                                        key={geo.rsmKey}
+                                                        geography={geo}
+                                                        fill={isMorocco ? "var(--surface)" : "#070E1B"}
+                                                        stroke="var(--surface-border)"
+                                                        strokeWidth={isMorocco ? 1.5 : 0.5}
+                                                        className="outline-none"
+                                                        style={{
+                                                            default: { outline: "none" },
+                                                            hover: { outline: "none", fill: isMorocco ? "rgba(30, 41, 59, 0.8)" : "#070E1B" },
+                                                            pressed: { outline: "none" },
+                                                        }}
+                                                    />
+                                                );
+                                            })
+                                        }
+                                    </Geographies>
 
-                                {/* Plotting Projects */}
-                                {keyProjects.map((project) => {
-                                    const coordinates = [project.longitude, project.latitude];
-                                    const isSelected = selectedProject && selectedProject.id === project.id;
+                                    {/* Plotting Grid Lines */}
+                                    {showGrid && (
+                                        <Geographies geography={{ type: "FeatureCollection", features: gridLines }}>
+                                            {({ geographies }) =>
+                                                geographies.map((geo, i) => {
+                                                    const color = getLineColor(geo.properties?.Legend);
+                                                    return (
+                                                        <Geography
+                                                            key={`grid-line-${i}`}
+                                                            geography={geo}
+                                                            fill="transparent"
+                                                            stroke={color}
+                                                            strokeWidth={0.5}
+                                                            className="opacity-70 transition-all duration-500"
+                                                            style={{
+                                                                default: { outline: "none" },
+                                                                hover: { outline: "none", strokeWidth: 1.5, opacity: 1 },
+                                                                pressed: { outline: "none" },
+                                                            }}
+                                                        />
+                                                    );
+                                                })
+                                            }
+                                        </Geographies>
+                                    )}
 
-                                    return (
-                                        <Marker key={project.id} coordinates={coordinates as [number, number]}>
-                                            <g
-                                                transform="translate(-16, -16)" // Center the 32x32 icon
-                                                className="cursor-pointer transition-all duration-300 transform outline-none"
-                                                onClick={() => setSelectedProject(project)}
-                                                style={{ transformOrigin: "center" }}
-                                            >
-                                                <circle cx="16" cy="16" r="16" fill="var(--bg-primary)" stroke={isSelected ? "var(--primary)" : "var(--surface-border)"} strokeWidth={isSelected ? 2 : 1} className="transition-all duration-300 shadow-xl" />
-                                                <g transform="translate(8, 8)">
-                                                    {getIcon(project.type)}
-                                                </g>
+                                    {/* Plotting Projects */}
+                                    {!showGrid && keyProjects.map((project) => {
+                                        const coordinates = [project.longitude, project.latitude];
+                                        const isSelected = selectedProject && selectedProject.id === project.id;
 
-                                                {isSelected && (
-                                                    <circle cx="16" cy="16" r="24" fill="none" stroke="var(--primary)" strokeWidth="1" className="animate-ping opacity-50" />
-                                                )}
-
-                                                {/* Tooltip text logic */}
-                                                <text
-                                                    textAnchor="start"
-                                                    y="-8"
-                                                    x="16"
-                                                    style={{
-                                                        fill: "white",
-                                                        fontSize: "12px",
-                                                        fontWeight: "bold",
-                                                        opacity: isSelected ? 1 : 0,
-                                                        filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.8))",
-                                                        transition: "opacity 0.3s"
-                                                    }}
+                                        return (
+                                            <Marker key={project.id} coordinates={coordinates as [number, number]}>
+                                                <g
+                                                    transform="translate(-16, -16)" // Center the 32x32 icon
+                                                    className="cursor-pointer transition-all duration-300 transform outline-none"
+                                                    onClick={() => setSelectedProject(project)}
+                                                    style={{ transformOrigin: "center" }}
                                                 >
-                                                    {project.location_name}
-                                                </text>
-                                            </g>
-                                        </Marker>
-                                    );
-                                })}
+                                                    <circle cx="16" cy="16" r="16" fill="var(--bg-primary)" stroke={isSelected ? "var(--primary)" : "var(--surface-border)"} strokeWidth={isSelected ? 2 : 1} className="transition-all duration-300 shadow-xl" />
+                                                    <g transform="translate(8, 8)">
+                                                        {getIcon(project.type)}
+                                                    </g>
+
+                                                    {isSelected && (
+                                                        <circle cx="16" cy="16" r="24" fill="none" stroke="var(--primary)" strokeWidth="1" className="animate-ping opacity-50" />
+                                                    )}
+
+                                                    {/* Tooltip text logic */}
+                                                    <text
+                                                        textAnchor="start"
+                                                        y="-8"
+                                                        x="16"
+                                                        style={{
+                                                            fill: "white",
+                                                            fontSize: "12px",
+                                                            fontWeight: "bold",
+                                                            opacity: isSelected ? 1 : 0,
+                                                            filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.8))",
+                                                            transition: "opacity 0.3s"
+                                                        }}
+                                                    >
+                                                        {project.location_name}
+                                                    </text>
+                                                </g>
+                                            </Marker>
+                                        );
+                                    })}
+                                </ZoomableGroup>
                             </ComposableMap>
 
                             {/* Legend Context */}
-                            <div className="absolute bottom-4 left-4 glass-panel bg-[var(--bg-primary)] p-3 flex gap-4 text-xs z-20 border-[var(--surface-border)]">
-                                <div className="flex items-center gap-1 text-[var(--text-muted)]"><Zap size={14} className="text-amber-500" /> Solar</div>
-                                <div className="flex items-center gap-1 text-[var(--text-muted)]"><Wind size={14} className="text-emerald-500" /> Wind</div>
-                                <div className="flex items-center gap-1 text-[var(--text-muted)]"><Droplets size={14} className="text-blue-500" /> Hydro</div>
+                            <div className="absolute bottom-4 left-4 flex flex-col gap-2 z-20">
+                                {!showGrid && (
+                                    <div className="glass-panel bg-[var(--bg-primary)] p-3 flex gap-4 text-xs border-[var(--surface-border)] animate-fade-in">
+                                        <div className="flex items-center gap-1 text-[var(--text-muted)]"><Zap size={14} className="text-amber-500" /> Solar</div>
+                                        <div className="flex items-center gap-1 text-[var(--text-muted)]"><Wind size={14} className="text-emerald-500" /> Wind</div>
+                                        <div className="flex items-center gap-1 text-[var(--text-muted)]"><Droplets size={14} className="text-blue-500" /> Hydro</div>
+                                    </div>
+                                )}
+                                {showGrid && (
+                                    <div className="glass-panel bg-[var(--bg-primary)] p-3 flex flex-col gap-2 text-xs border-[var(--surface-border)] animate-fade-in">
+                                        <span className="font-bold text-[var(--text-muted)] border-b border-[var(--surface-border)] pb-1 mb-1 relative before:w-1.5 before:h-1.5 before:bg-emerald-500 before:absolute before:-left-2 before:top-1.5 before:rounded-full pl-1">Network Transmission Lines</span>
+                                        <div className="flex items-center gap-2 text-[var(--text-muted)]"><div className="w-3 h-0.5 bg-[rgba(239,68,68,0.7)]"></div> 400 kV (Transport Principal)</div>
+                                        <div className="flex items-center gap-2 text-[var(--text-muted)]"><div className="w-3 h-0.5 bg-[rgba(245,158,11,0.7)]"></div> 225 kV</div>
+                                        <div className="flex items-center gap-2 text-[var(--text-muted)]"><div className="w-3 h-0.5 bg-[rgba(59,130,246,0.6)]"></div> 60 kV</div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

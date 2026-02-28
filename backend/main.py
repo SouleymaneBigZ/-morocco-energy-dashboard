@@ -87,3 +87,118 @@ def get_regulations(db: Session = Depends(database.get_db)):
     updates = db.query(models.RegulatoryUpdate).all()
     return updates
 
+@app.get("/api/grid-data")
+def get_grid_data():
+    """
+    Proxy endpoint to assemble the High Voltage electricity network from local datasets.
+    Combines the 'Existing' and 'Planned' transmission line datasets into a single FeatureCollection.
+    """
+    import os
+    import json
+    from fastapi.responses import JSONResponse
+    
+    # Paths relative to backend directory
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    existing_path = os.path.join(base_dir, "public", "data", "existingtransmissionlines.geojson")
+    future_path = os.path.join(base_dir, "public", "data", "futuretransmissionlines.geojson")
+
+    def load_clean_geojson(file_path: str):
+        if not os.path.exists(file_path):
+            return {"features": []}
+            
+        with open(file_path, 'r', encoding='utf-8') as f:
+            text_data = f.read().strip()
+            
+        # The World Bank currently has an export bug where it appends 'System.IO.MemoryStream' to the end of the JSON. 
+        if text_data.endswith("System.IO.MemoryStream"):
+            text_data = text_data.replace("System.IO.MemoryStream", "").strip()
+            
+        return json.loads(text_data)
+
+    try:
+        existing_data = load_clean_geojson(existing_path)
+        future_data = load_clean_geojson(future_path)
+        
+        # Combine into one massive Feature Collection expected by react-simple-maps Geographies
+        features = []
+        features.extend(existing_data.get("features", []))
+        features.extend(future_data.get("features", []))
+        
+        combined_geojson = {
+            "type": "FeatureCollection",
+            "features": features
+        }
+        
+        return JSONResponse(content=combined_geojson)
+
+    except Exception as e:
+        print(f"Error proxying Grid Data: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch local grid data: {str(e)}")
+
+
+import requests
+import json
+from fastapi.responses import JSONResponse
+
+@app.get("/api/grid-data")
+def get_grid_data():
+    """
+    Proxy endpoint to fetch the latest High Voltage electricity network from the World Bank.
+    Dataset ID: 0039843 (Morocco Electricity Transmission Network)
+    """
+    try:
+        # 1. Ask the World Bank for the latest Metadata of the package
+        wb_api_url = "https://datacatalogapi.worldbank.org/ddhxext/DatasetView?dataset_unique_id=0039843"
+        metadata_req = requests.get(wb_api_url, timeout=10)
+        metadata_req.raise_for_status()
+        metadata = metadata_req.json()
+        
+        # 2. Extract the actual download URLs for the GeoJSON files
+        existing_url = None
+        future_url = None
+        
+        for resource in metadata.get("Resources", []):
+            name = resource.get("name", "")
+            url = resource.get("url", "")
+            
+            if "geojson" in url.lower():
+                if "existing" in name.lower() or "DR0049574" in url:
+                    existing_url = url
+                elif "planned" in name.lower() or "future" in name.lower() or "DR0049575" in url:
+                    future_url = url
+
+        if not existing_url or not future_url:
+            raise HTTPException(status_code=500, detail="Could not find the GeoJSON resources from the World Bank API")
+
+        # 3. Helper function to fetch, strip arbitrary trailing bytes, and parse
+        def fetch_clean_geojson(url: str):
+            res = requests.get(url, timeout=15)
+            res.raise_for_status()
+            text_data = res.text.strip()
+            
+            # The World Bank currently has an export bug where it appends 'System.IO.MemoryStream' to the end of the JSON. 
+            # We must gracefully slice it away before parsing.
+            if text_data.endswith("System.IO.MemoryStream"):
+                text_data = text_data.replace("System.IO.MemoryStream", "").strip()
+                
+            return json.loads(text_data)
+
+        # 4. Fetch the data simultaneously (Sequential in this simple script)
+        existing_data = fetch_clean_geojson(existing_url)
+        future_data = fetch_clean_geojson(future_url)
+        
+        # 5. Combine into one massive Feature Collection
+        features = []
+        features.extend(existing_data.get("features", []))
+        features.extend(future_data.get("features", []))
+        
+        combined_geojson = {
+            "type": "FeatureCollection",
+            "features": features
+        }
+        
+        return JSONResponse(content=combined_geojson)
+
+    except Exception as e:
+        print(f"Error proxying World Bank Data: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch live grid data: {str(e)}")
