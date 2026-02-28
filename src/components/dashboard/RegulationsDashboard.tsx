@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { Scale, FileText, CheckCircle2, ChevronRight, BookOpen } from "lucide-react";
+import { useSync } from "@/context/SyncContext";
 
 export function RegulationsDashboard() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [regulatoryUpdates, setRegulatoryUpdates] = useState < any[] > ([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { isLiveSyncEnabled } = useSync();
 
     useEffect(() => {
         const fetchRegulations = async () => {
@@ -23,7 +25,13 @@ export function RegulationsDashboard() {
         };
 
         fetchRegulations();
-    }, []);
+
+        let interval: NodeJS.Timeout;
+        if (isLiveSyncEnabled) {
+            interval = setInterval(fetchRegulations, 10000);
+        }
+        return () => clearInterval(interval);
+    }, [isLiveSyncEnabled]);
 
     if (isLoading) {
         return (

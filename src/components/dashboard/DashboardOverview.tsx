@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSync } from "@/context/SyncContext";
 import {
     PieChart,
     Pie,
@@ -28,6 +29,7 @@ export function DashboardOverview() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [projects, setProjects] = useState < any[] > ([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { isLiveSyncEnabled } = useSync();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,7 +43,6 @@ export function DashboardOverview() {
 
                 if (kpisRes.ok && mixRes.ok && growthRes.ok && projectsRes.ok) {
                     setKpis(await kpisRes.json());
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const mixData = await mixRes.json();
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     setCurrentMix(mixData.filter((m: any) => m.type === 'current'));
@@ -58,7 +59,15 @@ export function DashboardOverview() {
         };
 
         fetchData();
-    }, []);
+
+        let interval: NodeJS.Timeout;
+        if (isLiveSyncEnabled) {
+            // Poll for fresh data every 10 seconds if Sync is ON
+            interval = setInterval(fetchData, 10000);
+        }
+
+        return () => clearInterval(interval);
+    }, [isLiveSyncEnabled]);
 
     if (isLoading) {
         return (
@@ -76,10 +85,6 @@ export function DashboardOverview() {
                 <div>
                     <h1 className="text-3xl font-bold text-white mb-1">National Energy Overview</h1>
                     <p className="text-[var(--text-muted)]">Moroccan energy transition performance and key metrics</p>
-                </div>
-                <div className="flex items-center gap-2 bg-[var(--surface)] border border-[var(--surface-border)] rounded-full px-4 py-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span className="text-sm font-medium text-emerald-400">Live Data Sync</span>
                 </div>
             </div>
 

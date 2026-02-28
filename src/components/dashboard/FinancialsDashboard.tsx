@@ -12,11 +12,13 @@ import {
     Cell
 } from "recharts";
 import { TrendingUp, DollarSign, Briefcase } from "lucide-react";
+import { useSync } from "@/context/SyncContext";
 
 export function FinancialsDashboard() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [investmentDistribution, setInvestmentDistribution] = useState < any[] > ([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { isLiveSyncEnabled } = useSync();
 
     useEffect(() => {
         const fetchFinancials = async () => {
@@ -33,10 +35,16 @@ export function FinancialsDashboard() {
         };
 
         fetchFinancials();
-    }, []);
+
+        let interval: NodeJS.Timeout;
+        if (isLiveSyncEnabled) {
+            interval = setInterval(fetchFinancials, 10000);
+        }
+        return () => clearInterval(interval);
+    }, [isLiveSyncEnabled]);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const totalInvestment = investmentDistribution.reduce((sum: any, item: any) => sum + item.amountBillionUSD, 0);
+    const totalInvestment = investmentDistribution.reduce((sum: number, item: any) => sum + item.amountBillionUSD, 0);
 
     if (isLoading) {
         return (
@@ -149,7 +157,6 @@ export function FinancialsDashboard() {
                     </button>
                 </div>
             </div>
-
         </div>
     );
 }

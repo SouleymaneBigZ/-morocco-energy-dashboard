@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { MapPin, Info, Zap, Wind, Droplets } from "lucide-react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
+import { useSync } from "@/context/SyncContext";
 
 const geoUrl = "/world.json";
 
@@ -12,6 +13,7 @@ export function ProjectsMap() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedProject, setSelectedProject] = useState < any | null > (null);
     const [isLoading, setIsLoading] = useState(true);
+    const { isLiveSyncEnabled } = useSync();
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -32,7 +34,13 @@ export function ProjectsMap() {
         };
 
         fetchProjects();
-    }, []);
+
+        let interval: NodeJS.Timeout;
+        if (isLiveSyncEnabled) {
+            interval = setInterval(fetchProjects, 10000);
+        }
+        return () => clearInterval(interval);
+    }, [isLiveSyncEnabled]);
 
     // Actual geographic coordinates [longitude, latitude] for the cities
     const getCoordinates = (location: string): [number, number] => {
