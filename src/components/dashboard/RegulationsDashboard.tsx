@@ -1,9 +1,37 @@
 "use client";
 
-import { regulatoryUpdates } from "@/services/mockData";
+import { useState, useEffect } from "react";
 import { Scale, FileText, CheckCircle2, ChevronRight, BookOpen } from "lucide-react";
 
 export function RegulationsDashboard() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [regulatoryUpdates, setRegulatoryUpdates] = useState < any[] > ([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchRegulations = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/regulations');
+                if (response.ok) {
+                    setRegulatoryUpdates(await response.json());
+                }
+            } catch (error) {
+                console.error("Error fetching regulations data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchRegulations();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-[400px]">
+                <div className="w-10 h-10 border-4 border-[var(--surface-border)] border-t-[var(--primary)] rounded-full animate-spin"></div>
+            </div>
+        );
+    }
     return (
         <div className="space-y-6 animate-fade-in">
             {/* Header section */}

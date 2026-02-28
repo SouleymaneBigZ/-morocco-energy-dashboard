@@ -1,12 +1,6 @@
 "use client";
 
-import {
-    topLevelKPIs,
-    currentGenerationMix,
-    targetGenerationMix2030,
-    historicalGrowth,
-    keyProjects
-} from "@/services/mockData";
+import { useState, useEffect } from "react";
 import {
     PieChart,
     Pie,
@@ -23,6 +17,58 @@ import {
 import { ArrowUpRight, ArrowDownRight, Activity, Zap } from "lucide-react";
 
 export function DashboardOverview() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [kpis, setKpis] = useState < any[] > ([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [currentMix, setCurrentMix] = useState < any[] > ([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [targetMix, setTargetMix] = useState < any[] > ([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [growth, setGrowth] = useState < any[] > ([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [projects, setProjects] = useState < any[] > ([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [kpisRes, mixRes, growthRes, projectsRes] = await Promise.all([
+                    fetch('http://localhost:8000/api/kpis'),
+                    fetch('http://localhost:8000/api/generation-mix'),
+                    fetch('http://localhost:8000/api/historical-growth'),
+                    fetch('http://localhost:8000/api/projects')
+                ]);
+
+                if (kpisRes.ok && mixRes.ok && growthRes.ok && projectsRes.ok) {
+                    setKpis(await kpisRes.json());
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const mixData = await mixRes.json();
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    setCurrentMix(mixData.filter((m: any) => m.type === 'current'));
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    setTargetMix(mixData.filter((m: any) => m.type === 'target'));
+                    setGrowth(await growthRes.json());
+                    setProjects(await projectsRes.json());
+                }
+            } catch (error) {
+                console.error("Error fetching overview data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
+                <div className="w-12 h-12 rounded-full border-4 border-[var(--surface-border)] border-t-[var(--primary)] animate-spin"></div>
+                <div className="text-[var(--text-muted)] animate-pulse font-medium">Connecting to Data Intelligence...</div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             {/* Header section */}
@@ -39,7 +85,7 @@ export function DashboardOverview() {
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {topLevelKPIs.map((kpi, index) => (
+                {kpis.map((kpi, index) => (
                     <div key={index} className="glass-panel p-6 relative overflow-hidden group">
                         {/* Subtle glow effect on hover */}
                         <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-gradient-to-br from-[var(--primary-glow)] to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -73,7 +119,7 @@ export function DashboardOverview() {
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
-                                    data={currentGenerationMix}
+                                    data={currentMix}
                                     cx="50%"
                                     cy="50%"
                                     innerRadius={80}
@@ -82,7 +128,7 @@ export function DashboardOverview() {
                                     dataKey="value"
                                     stroke="none"
                                 >
-                                    {currentGenerationMix.map((entry, index) => (
+                                    {currentMix.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
@@ -115,7 +161,7 @@ export function DashboardOverview() {
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
-                                    data={targetGenerationMix2030}
+                                    data={targetMix}
                                     cx="50%"
                                     cy="50%"
                                     innerRadius={80}
@@ -124,7 +170,7 @@ export function DashboardOverview() {
                                     dataKey="value"
                                     stroke="none"
                                 >
-                                    {targetGenerationMix2030.map((entry, index) => (
+                                    {targetMix.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
@@ -160,7 +206,7 @@ export function DashboardOverview() {
                 <div className="h-[350px] w-full mt-4">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
-                            data={historicalGrowth}
+                            data={growth}
                             margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                         >
                             <defs>
@@ -211,8 +257,8 @@ export function DashboardOverview() {
                             </tr>
                         </thead>
                         <tbody>
-                            {keyProjects.map((project, idx) => (
-                                <tr key={project.id} className={`border-b border-[var(--surface-border)] hover:bg-[var(--surface)] transition-colors ${idx === keyProjects.length - 1 ? 'border-b-0' : ''}`}>
+                            {projects.map((project, idx) => (
+                                <tr key={project.id} className={`border-b border-[var(--surface-border)] hover:bg-[var(--surface)] transition-colors ${idx === projects.length - 1 ? 'border-b-0' : ''}`}>
                                     <td className="px-4 py-4 text-sm font-medium text-white">{project.name}</td>
                                     <td className="px-4 py-4 text-sm text-[var(--text-muted)]">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
@@ -222,8 +268,8 @@ export function DashboardOverview() {
                                             {project.type}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-4 text-sm text-white font-medium">{project.capacityMW} MW</td>
-                                    <td className="px-4 py-4 text-sm text-[var(--text-muted)]">{project.location}</td>
+                                    <td className="px-4 py-4 text-sm text-white font-medium">{project.capacity_mw} MW</td>
+                                    <td className="px-4 py-4 text-sm text-[var(--text-muted)]">{project.location_name}</td>
                                     <td className="px-4 py-4 text-sm">
                                         <div className="flex items-center gap-2">
                                             <span className={`w-2 h-2 rounded-full 

@@ -1,6 +1,6 @@
 "use client";
 
-import { investmentDistribution } from "@/services/mockData";
+import { useState, useEffect } from "react";
 import {
     BarChart,
     Bar,
@@ -14,7 +14,37 @@ import {
 import { TrendingUp, DollarSign, Briefcase } from "lucide-react";
 
 export function FinancialsDashboard() {
-    const totalInvestment = investmentDistribution.reduce((sum, item) => sum + item.amountBillionUSD, 0);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [investmentDistribution, setInvestmentDistribution] = useState < any[] > ([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchFinancials = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/financials');
+                if (response.ok) {
+                    setInvestmentDistribution(await response.json());
+                }
+            } catch (error) {
+                console.error("Error fetching financials data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchFinancials();
+    }, []);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const totalInvestment = investmentDistribution.reduce((sum: any, item: any) => sum + item.amountBillionUSD, 0);
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-[400px]">
+                <div className="w-10 h-10 border-4 border-[var(--surface-border)] border-t-[var(--primary)] rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 animate-fade-in">

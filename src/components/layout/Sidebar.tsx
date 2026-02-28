@@ -19,6 +19,7 @@ export function Sidebar() {
         { label: "Projects Map", icon: Map, href: "/projects" },
         { label: "Financials", icon: Briefcase, href: "/financials" },
         { label: "Regulations", icon: FileText, href: "/regulations" },
+        { label: "Market Evaluation", icon: BarChart3, href: "/market" },
     ];
 
     return (
@@ -44,8 +45,8 @@ export function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 ${isActive
-                                    ? "bg-slate-800/80 text-white shadow-sm border border-slate-700/50"
-                                    : "text-slate-400 hover:text-white hover:bg-slate-800/40"
+                                ? "bg-slate-800/80 text-white shadow-sm border border-slate-700/50"
+                                : "text-slate-400 hover:text-white hover:bg-slate-800/40"
                                 }`}
                         >
                             <Icon className={`w-5 h-5 ${isActive ? "text-emerald-400" : ""}`} />

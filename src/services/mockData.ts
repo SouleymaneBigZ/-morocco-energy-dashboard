@@ -26,13 +26,13 @@ export interface Project {
 // Note: As real-time public APIs for Moroccan energy are limited, these figures are based on 
 // official reports and announcements up to 2023/2024.
 
-// 2023 Generation Capacity Mix (Approximate based on MEM reports)
+// 2024 Generation Capacity Mix (Based on ONEE / MEM Official 2024 reports)
 export const currentGenerationMix: EnergyData[] = [
-  { name: "Coal", value: 37, color: "#475569" },
-  { name: "Natural Gas / Fuel", value: 25, color: "#64748b" },
-  { name: "Solar", value: 8, color: "#F59E0B" },
-  { name: "Wind", value: 14, color: "#10B981" },
-  { name: "Hydro", value: 16, color: "#3B82F6" }
+  { name: "Coal", value: 34.2, color: "#475569" }, // Approx adjustment
+  { name: "Natural Gas / Fuel", value: 20.5, color: "#64748b" },
+  { name: "Solar", value: 7.8, color: "#F59E0B" }, // 934 MW
+  { name: "Wind", value: 17.7, color: "#10B981" }, // 2.128 GW
+  { name: "Hydro", value: 19.8, color: "#3B82F6" } // 2.12 GW
 ];
 
 // Official Target 2030 (To exceed 52%)
@@ -46,20 +46,20 @@ export const targetGenerationMix2030: EnergyData[] = [
 export const topLevelKPIs: Metric[] = [
   {
     label: "Total Installed Capacity",
-    value: "11,429 MW", // Based on recent ONEE/MEM figures (approx)
-    subtext: "Source: MEM / ONEE (2023)",
+    value: "12,016 MW", // Based on ONEE 2024 report
+    subtext: "Source: ONEE / MEM (End 2024)",
     trend: "up"
   },
   {
     label: "Renewable Energy Share",
-    value: "38%", // Actual installed capacity share is around 38-40% recently
+    value: "45.3%", // Official capacity share end 2024
     subtext: "Target 2030: >52%",
     trend: "up"
   },
   {
     label: "Active Projects Investment",
-    value: "$5B +",
-    subtext: "Principally Noor & Tarfaya expansions",
+    value: "$1.4B / yr", // Average $1.4B (14B MAD) yearly 2023-2027
+    subtext: "Principally Wind & Solar expansion",
     trend: "up"
   }
 ];
