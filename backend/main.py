@@ -200,12 +200,24 @@ async def get_climate_data(
             dni_annual = parameters.get("ALLSKY_SFC_SW_DNI", {}).get("ANN", "N/A")
             wind_annual = parameters.get("WS50M", {}).get("ANN", "N/A")
             
+            # Format Monthly Evolution Array
+            months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+            monthly_evolution = []
+            for m in months:
+                monthly_evolution.append({
+                    "month": m,
+                    "GHI": parameters.get("ALLSKY_SFC_SW_DWN", {}).get(m, 0),
+                    "DNI": parameters.get("ALLSKY_SFC_SW_DNI", {}).get(m, 0),
+                    "Wind": parameters.get("WS50M", {}).get(m, 0)
+                })
+            
             return {
                 "latitude": lat,
                 "longitude": lon,
                 "GHI": ghi_annual,
                 "DNI": dni_annual,
                 "Wind_Speed_50m": wind_annual,
+                "monthly_evolution": monthly_evolution,
                 "units": {
                     "GHI": "kWh/m^2/day",
                     "DNI": "kWh/m^2/day",

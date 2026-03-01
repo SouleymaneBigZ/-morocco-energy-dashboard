@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { MapPin, Info, Zap, Wind, Droplets, Activity } from "lucide-react";
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useSync } from "@/context/SyncContext";
 
 const geoUrl = "/world.json";
@@ -21,6 +22,7 @@ export function ProjectsMap() {
     // Climate Data state
     const [climateData, setClimateData] = useState < any | null > (null);
     const [isClimateLoading, setIsClimateLoading] = useState(false);
+    const [activeClimateTab, setActiveClimateTab] = useState < 'GHI' | 'DNI' | 'Wind' > ('GHI');
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -350,32 +352,94 @@ export function ProjectsMap() {
                                                     <div className="w-5 h-5 border-2 border-[var(--surface-border)] border-t-blue-500 rounded-full animate-spin"></div>
                                                 </div>
                                             ) : climateData ? (
-                                                <div className="grid grid-cols-3 gap-2 relative z-10">
-                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
-                                                        <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Global Horizontal Irradiance">GHI</div>
-                                                        <div className="text-sm font-bold text-amber-500">{climateData.GHI}</div>
-                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">kWh/m²/d</div>
-                                                        <div className="text-[8px] font-semibold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                                                            <Activity size={8} /> +1.2%
+                                                <>
+                                                    <div className="grid grid-cols-3 gap-2 relative z-10">
+                                                        <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
+                                                            <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Global Horizontal Irradiance">GHI</div>
+                                                            <div className="text-sm font-bold text-amber-500">{climateData.GHI}</div>
+                                                            <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">kWh/m²/d</div>
+                                                            <div className="text-[8px] font-semibold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                                                <Activity size={8} /> +1.2%
+                                                            </div>
+                                                        </div>
+                                                        <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
+                                                            <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Direct Normal Irradiance">DNI</div>
+                                                            <div className="text-sm font-bold text-amber-500">{climateData.DNI}</div>
+                                                            <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">kWh/m²/d</div>
+                                                            <div className="text-[8px] font-semibold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                                                <Activity size={8} /> +0.8%
+                                                            </div>
+                                                        </div>
+                                                        <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
+                                                            <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Wind Speed at 50m">Wind</div>
+                                                            <div className="text-sm font-bold text-emerald-400">{climateData.Wind_Speed_50m}</div>
+                                                            <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">m/s</div>
+                                                            <div className="text-[8px] font-semibold text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                                                <Activity size={8} /> -0.4%
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
-                                                        <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Direct Normal Irradiance">DNI</div>
-                                                        <div className="text-sm font-bold text-amber-500">{climateData.DNI}</div>
-                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">kWh/m²/d</div>
-                                                        <div className="text-[8px] font-semibold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                                                            <Activity size={8} /> +0.8%
+
+                                                    {climateData.monthly_evolution && (
+                                                        <div className="mt-4 border-t border-[var(--surface-border)] pt-3 relative z-10 w-full">
+                                                            <div className="flex items-center justify-between mb-2">
+                                                                <div className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider">Evolution Annuelle</div>
+                                                                <div className="flex bg-[var(--background)] rounded-md p-0.5 border border-[var(--surface-border)]">
+                                                                    <button
+                                                                        onClick={() => setActiveClimateTab('GHI')}
+                                                                        className={`text-[9px] px-2 py-0.5 rounded-sm transition-colors ${activeClimateTab === 'GHI' ? 'bg-amber-500/20 text-amber-500 font-bold' : 'text-[var(--text-muted)] hover:text-white'}`}
+                                                                    >
+                                                                        GHI
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => setActiveClimateTab('DNI')}
+                                                                        className={`text-[9px] px-2 py-0.5 rounded-sm transition-colors ${activeClimateTab === 'DNI' ? 'bg-amber-500/20 text-amber-500 font-bold' : 'text-[var(--text-muted)] hover:text-white'}`}
+                                                                    >
+                                                                        DNI
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => setActiveClimateTab('Wind')}
+                                                                        className={`text-[9px] px-2 py-0.5 rounded-sm transition-colors ${activeClimateTab === 'Wind' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : 'text-[var(--text-muted)] hover:text-white'}`}
+                                                                    >
+                                                                        VITESSE
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="h-28 w-full">
+                                                                <ResponsiveContainer width="100%" height="100%">
+                                                                    <AreaChart data={climateData.monthly_evolution} margin={{ top: 5, right: 0, left: -25, bottom: 0 }}>
+                                                                        <defs>
+                                                                            <linearGradient id="colorGHI" x1="0" y1="0" x2="0" y2="1">
+                                                                                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
+                                                                                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                                                                            </linearGradient>
+                                                                            <linearGradient id="colorWind" x1="0" y1="0" x2="0" y2="1">
+                                                                                <stop offset="5%" stopColor="#34d399" stopOpacity={0.3} />
+                                                                                <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
+                                                                            </linearGradient>
+                                                                        </defs>
+                                                                        <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: 'var(--text-muted)' }} />
+                                                                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 8, fill: 'var(--text-muted)' }} />
+                                                                        <Tooltip
+                                                                            contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--surface-border)', fontSize: '10px', borderRadius: '6px' }}
+                                                                            itemStyle={{ color: activeClimateTab === 'Wind' ? '#34d399' : '#f59e0b', fontWeight: 'bold' }}
+                                                                            formatter={(value: any) => [`${value} ${activeClimateTab === 'Wind' ? 'm/s' : 'kWh/m²/d'}`, activeClimateTab]}
+                                                                        />
+                                                                        <Area
+                                                                            type="monotone"
+                                                                            dataKey={activeClimateTab}
+                                                                            stroke={activeClimateTab === 'Wind' ? '#34d399' : '#f59e0b'}
+                                                                            strokeWidth={2}
+                                                                            fillOpacity={1}
+                                                                            fill={`url(#color${activeClimateTab === 'Wind' ? 'Wind' : 'GHI'})`}
+                                                                        />
+                                                                    </AreaChart>
+                                                                </ResponsiveContainer>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
-                                                        <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Wind Speed at 50m">Wind</div>
-                                                        <div className="text-sm font-bold text-emerald-400">{climateData.Wind_Speed_50m}</div>
-                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">m/s</div>
-                                                        <div className="text-[8px] font-semibold text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                                                            <Activity size={8} /> -0.4%
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                    )}
+                                                </>
                                             ) : (
                                                 <div className="text-xs text-[var(--text-muted)] h-16 flex items-center justify-center italic">
                                                     Telemetry Unavailable
@@ -400,7 +464,8 @@ export function ProjectsMap() {
                     </div>
 
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }
