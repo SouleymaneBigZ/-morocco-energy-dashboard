@@ -152,69 +152,58 @@ export function ProjectsMap() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                     {/* Map Visualization Area */}
-                    <div className="lg:col-span-2 glass-panel p-6 min-h-[500px] relative flex items-center justify-center overflow-hidden">
-                        {/* Abstract Map Background Pattern */}
-                        <div className="absolute inset-0 opacity-10" style={{
-                            backgroundImage: "radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)",
-                            backgroundSize: "24px 24px"
-                        }}></div>
+                    <div className="lg:col-span-2 relative flex flex-col group">
+                        {/* Premium Ambient Glow Behind the Map Box */}
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 via-transparent to-emerald-500/20 rounded-[2rem] blur-xl opacity-30 group-hover:opacity-70 transition duration-1000"></div>
 
-                        <div className="absolute top-4 left-4 z-10">
-                            <h3 className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-widest">Geographical Distribution</h3>
-                        </div>
+                        <div className="glass-panel p-2 rounded-[2rem] min-h-[500px] relative flex flex-col overflow-hidden bg-[var(--surface)]/60 backdrop-blur-md border border-white/10 shadow-2xl">
 
-                        <div className="relative w-full h-[600px] mt-8 z-10 border border-[var(--surface-border)] rounded-3xl bg-[#0A1224] shadow-2xl overflow-hidden flex items-center justify-center">
+                            {/* Outer Map Container with gradient and inner shadow */}
+                            <div className="relative w-full h-[600px] z-10 rounded-[1.5rem] bg-gradient-to-b from-[#0A1225] to-[#040810] shadow-[inset_0_4px_40px_rgba(0,0,0,0.8)] overflow-hidden flex items-center justify-center border border-white/5">
 
-                            {/* Map Component */}
-                            <ComposableMap
-                                projection="geoMercator"
-                                projectionConfig={{
-                                    scale: 2200,
-                                    center: [-8, 29.5] // Focus on Morocco coordinates
-                                }}
-                                className="w-full h-full outline-none"
-                            >
-                                <ZoomableGroup zoom={1} center={[-8, 29.5]} minZoom={1} maxZoom={5}>
-                                    <Geographies geography={geoUrl}>
-                                        {({ geographies }) =>
-                                            geographies.map((geo) => {
-                                                const isMorocco = geo.properties.name === "Morocco" || geo.id === "MAR" || geo.id === "ESH";
-                                                return (
-                                                    <Geography
-                                                        key={geo.rsmKey}
-                                                        geography={geo}
-                                                        fill={isMorocco ? "var(--surface)" : "#070E1B"}
-                                                        stroke="var(--surface-border)"
-                                                        strokeWidth={isMorocco ? 1.5 : 0.5}
-                                                        className="outline-none"
-                                                        style={{
-                                                            default: { outline: "none" },
-                                                            hover: { outline: "none", fill: isMorocco ? "rgba(30, 41, 59, 0.8)" : "#070E1B" },
-                                                            pressed: { outline: "none" },
-                                                        }}
-                                                    />
-                                                );
-                                            })
-                                        }
-                                    </Geographies>
+                                {/* Inner Header Overlay */}
+                                <div className="absolute top-6 left-6 z-20 flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)] backdrop-blur-md">
+                                        <MapPin size={20} className="text-blue-400" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h3 className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-0.5">Interactive Explorer</h3>
+                                        <h2 className="text-xl text-white font-medium tracking-wide">Geographical Distribution</h2>
+                                    </div>
+                                </div>
 
-                                    {/* Plotting Grid Lines */}
-                                    {showGrid && (
-                                        <Geographies geography={{ type: "FeatureCollection", features: gridLines }}>
+                                {/* Abstract Map Background Grid Texture */}
+                                <div className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-screen" style={{
+                                    backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+                                    backgroundSize: "40px 40px"
+                                }}></div>
+                                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.06)_0%,transparent_70%)] pointer-events-none"></div>
+
+                                {/* Map Component */}
+                                <ComposableMap
+                                    projection="geoMercator"
+                                    projectionConfig={{
+                                        scale: 2200,
+                                        center: [-8, 29.5] // Focus on Morocco coordinates
+                                    }}
+                                    className="w-full h-full outline-none"
+                                >
+                                    <ZoomableGroup zoom={1} center={[-8, 29.5]} minZoom={1} maxZoom={5}>
+                                        <Geographies geography={geoUrl}>
                                             {({ geographies }) =>
-                                                geographies.map((geo, i) => {
-                                                    const color = getLineColor(geo.properties?.Legend);
+                                                geographies.map((geo) => {
+                                                    const isMorocco = geo.properties.name === "Morocco" || geo.id === "MAR" || geo.id === "ESH";
                                                     return (
                                                         <Geography
-                                                            key={`grid-line-${i}`}
+                                                            key={geo.rsmKey}
                                                             geography={geo}
-                                                            fill="transparent"
-                                                            stroke={color}
-                                                            strokeWidth={0.5}
-                                                            className="opacity-70 transition-all duration-500"
+                                                            fill={isMorocco ? "var(--surface)" : "#070E1B"}
+                                                            stroke="var(--surface-border)"
+                                                            strokeWidth={isMorocco ? 1.5 : 0.5}
+                                                            className="outline-none"
                                                             style={{
                                                                 default: { outline: "none" },
-                                                                hover: { outline: "none", strokeWidth: 1.5, opacity: 1 },
+                                                                hover: { outline: "none", fill: isMorocco ? "rgba(30, 41, 59, 0.8)" : "#070E1B" },
                                                                 pressed: { outline: "none" },
                                                             }}
                                                         />
@@ -222,70 +211,99 @@ export function ProjectsMap() {
                                                 })
                                             }
                                         </Geographies>
-                                    )}
 
-                                    {/* Plotting Projects */}
-                                    {!showGrid && keyProjects.map((project) => {
-                                        const coordinates = [project.longitude, project.latitude];
-                                        const isSelected = selectedProject && selectedProject.id === project.id;
+                                        {/* Plotting Grid Lines */}
+                                        {showGrid && (
+                                            <Geographies geography={{ type: "FeatureCollection", features: gridLines }}>
+                                                {({ geographies }) =>
+                                                    geographies.map((geo, i) => {
+                                                        const color = getLineColor(geo.properties?.Legend);
+                                                        return (
+                                                            <Geography
+                                                                key={`grid-line-${i}`}
+                                                                geography={geo}
+                                                                fill="transparent"
+                                                                stroke={color}
+                                                                strokeWidth={0.5}
+                                                                className="opacity-70 transition-all duration-500"
+                                                                style={{
+                                                                    default: { outline: "none" },
+                                                                    hover: { outline: "none", strokeWidth: 1.5, opacity: 1 },
+                                                                    pressed: { outline: "none" },
+                                                                }}
+                                                            />
+                                                        );
+                                                    })
+                                                }
+                                            </Geographies>
+                                        )}
 
-                                        return (
-                                            <Marker key={project.id} coordinates={coordinates as [number, number]}>
-                                                <g
-                                                    transform="translate(-16, -16)" // Center the 32x32 icon
-                                                    className="cursor-pointer transition-all duration-300 transform outline-none"
-                                                    onClick={() => setSelectedProject(project)}
-                                                    style={{ transformOrigin: "center" }}
-                                                >
-                                                    <circle cx="16" cy="16" r="16" fill="var(--bg-primary)" stroke={isSelected ? "var(--primary)" : "var(--surface-border)"} strokeWidth={isSelected ? 2 : 1} className="transition-all duration-300 shadow-xl" />
-                                                    <g transform="translate(8, 8)">
-                                                        {getIcon(project.type)}
-                                                    </g>
+                                        {/* Plotting Projects */}
+                                        {!showGrid && keyProjects.map((project) => {
+                                            const coordinates = [project.longitude, project.latitude];
+                                            const isSelected = selectedProject && selectedProject.id === project.id;
 
-                                                    {isSelected && (
-                                                        <circle cx="16" cy="16" r="24" fill="none" stroke="var(--primary)" strokeWidth="1" className="animate-ping opacity-50" />
-                                                    )}
-
-                                                    {/* Tooltip text logic */}
-                                                    <text
-                                                        textAnchor="start"
-                                                        y="-8"
-                                                        x="16"
-                                                        style={{
-                                                            fill: "white",
-                                                            fontSize: "12px",
-                                                            fontWeight: "bold",
-                                                            opacity: isSelected ? 1 : 0,
-                                                            filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.8))",
-                                                            transition: "opacity 0.3s"
-                                                        }}
+                                            return (
+                                                <Marker key={project.id} coordinates={coordinates as [number, number]}>
+                                                    <g
+                                                        transform="translate(-16, -16)" // Center the 32x32 icon
+                                                        className="cursor-pointer transition-all duration-300 transform outline-none"
+                                                        onClick={() => setSelectedProject(project)}
+                                                        style={{ transformOrigin: "center" }}
                                                     >
-                                                        {project.location_name}
-                                                    </text>
-                                                </g>
-                                            </Marker>
-                                        );
-                                    })}
-                                </ZoomableGroup>
-                            </ComposableMap>
+                                                        <circle cx="16" cy="16" r="16" fill="var(--bg-primary)" stroke={isSelected ? "var(--primary)" : "var(--surface-border)"} strokeWidth={isSelected ? 2 : 1} className="transition-all duration-300 shadow-xl" />
+                                                        <g transform="translate(8, 8)">
+                                                            {getIcon(project.type)}
+                                                        </g>
 
-                            {/* Legend Context */}
-                            <div className="absolute bottom-4 left-4 flex flex-col gap-2 z-20">
-                                {!showGrid && (
-                                    <div className="glass-panel bg-[var(--bg-primary)] p-3 flex gap-4 text-xs border-[var(--surface-border)] animate-fade-in">
-                                        <div className="flex items-center gap-1 text-[var(--text-muted)]"><Zap size={14} className="text-amber-500" /> Solar</div>
-                                        <div className="flex items-center gap-1 text-[var(--text-muted)]"><Wind size={14} className="text-emerald-500" /> Wind</div>
-                                        <div className="flex items-center gap-1 text-[var(--text-muted)]"><Droplets size={14} className="text-blue-500" /> Hydro</div>
-                                    </div>
-                                )}
-                                {showGrid && (
-                                    <div className="glass-panel bg-[var(--bg-primary)] p-3 flex flex-col gap-2 text-xs border-[var(--surface-border)] animate-fade-in">
-                                        <span className="font-bold text-[var(--text-muted)] border-b border-[var(--surface-border)] pb-1 mb-1 relative before:w-1.5 before:h-1.5 before:bg-emerald-500 before:absolute before:-left-2 before:top-1.5 before:rounded-full pl-1">Network Transmission Lines</span>
-                                        <div className="flex items-center gap-2 text-[var(--text-muted)]"><div className="w-3 h-0.5 bg-[rgba(239,68,68,0.7)]"></div> 400 kV (Transport Principal)</div>
-                                        <div className="flex items-center gap-2 text-[var(--text-muted)]"><div className="w-3 h-0.5 bg-[rgba(245,158,11,0.7)]"></div> 225 kV</div>
-                                        <div className="flex items-center gap-2 text-[var(--text-muted)]"><div className="w-3 h-0.5 bg-[rgba(59,130,246,0.6)]"></div> 60 kV</div>
-                                    </div>
-                                )}
+                                                        {isSelected && (
+                                                            <circle cx="16" cy="16" r="24" fill="none" stroke="var(--primary)" strokeWidth="1" className="animate-ping opacity-50" />
+                                                        )}
+
+                                                        {/* Tooltip text logic */}
+                                                        <text
+                                                            textAnchor="start"
+                                                            y="-8"
+                                                            x="16"
+                                                            style={{
+                                                                fill: "white",
+                                                                fontSize: "12px",
+                                                                fontWeight: "bold",
+                                                                opacity: isSelected ? 1 : 0,
+                                                                filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.8))",
+                                                                transition: "opacity 0.3s"
+                                                            }}
+                                                        >
+                                                            {project.location_name}
+                                                        </text>
+                                                    </g>
+                                                </Marker>
+                                            );
+                                        })}
+                                    </ZoomableGroup>
+                                </ComposableMap>
+
+                                {/* Legend Context */}
+                                <div className="absolute bottom-6 left-6 flex flex-col gap-2 z-20 animate-fade-in">
+                                    {!showGrid && (
+                                        <div className="bg-[#0A1225]/80 backdrop-blur-xl px-5 py-3.5 rounded-2xl flex gap-6 text-sm border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                                            <div className="flex items-center gap-2.5 text-white font-medium"><Zap size={16} className="text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]" /> Solar</div>
+                                            <div className="flex items-center gap-2.5 text-white font-medium"><Wind size={16} className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]" /> Wind</div>
+                                            <div className="flex items-center gap-2.5 text-white font-medium"><Droplets size={16} className="text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.6)]" /> Hydro</div>
+                                        </div>
+                                    )}
+                                    {showGrid && (
+                                        <div className="bg-[#0A1225]/80 backdrop-blur-xl px-6 py-5 rounded-2xl flex flex-col gap-3.5 text-sm border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                                            <div className="font-semibold text-white/90 border-b border-white/10 pb-3 mb-1 flex items-center gap-2.5 tracking-wide">
+                                                <Activity size={16} className="text-blue-400 animate-pulse" />
+                                                Network Transmission Lines
+                                            </div>
+                                            <div className="flex items-center gap-3 text-white/80"><div className="w-5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div> <span className="font-mono text-[11px] bg-red-500/10 px-1.5 rounded text-red-400 border border-red-500/20">400 kV</span> (Transport Principal)</div>
+                                            <div className="flex items-center gap-3 text-white/80"><div className="w-5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div> <span className="font-mono text-[11px] bg-amber-500/10 px-1.5 rounded text-amber-500 border border-amber-500/20">225 kV</span></div>
+                                            <div className="flex items-center gap-3 text-white/80"><div className="w-5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div> <span className="font-mono text-[11px] bg-blue-500/10 px-1.5 rounded text-blue-400 border border-blue-500/20">60 kV</span></div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
