@@ -18,6 +18,10 @@ export function ProjectsMap() {
     const [showGrid, setShowGrid] = useState(false);
     const { isLiveSyncEnabled } = useSync();
 
+    // Climate Data state
+    const [climateData, setClimateData] = useState < any | null > (null);
+    const [isClimateLoading, setIsClimateLoading] = useState(false);
+
     useEffect(() => {
         const fetchProjects = async () => {
             try {
@@ -59,6 +63,29 @@ export function ProjectsMap() {
         }
         return () => clearInterval(interval);
     }, [isLiveSyncEnabled]);
+
+    // Fetch dynamic climatic data whenever a project is selected
+    useEffect(() => {
+        if (!selectedProject || !selectedProject.latitude || !selectedProject.longitude) return;
+
+        const fetchClimateData = async () => {
+            setIsClimateLoading(true);
+            setClimateData(null);
+            try {
+                const res = await fetch(`http://localhost:8000/api/climate-data?lat=${selectedProject.latitude}&lon=${selectedProject.longitude}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setClimateData(data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch climate data:", err);
+            } finally {
+                setIsClimateLoading(false);
+            }
+        };
+
+        fetchClimateData();
+    }, [selectedProject]);
 
     // We now receive [longitude, latitude] directly from the backend
 
@@ -300,6 +327,50 @@ export function ProjectsMap() {
                                                             'bg-slate-500'}`}></span>
                                                 <span className="text-white font-medium">{selectedProject.status}</span>
                                             </div>
+                                        </div>
+
+                                        {/* Dynamic Climate Telemetry Panel */}
+                                        <div className="bg-[var(--bg-accent)] p-4 rounded-xl border border-[var(--surface-border)] relative overflow-hidden">
+                                            {/* NASA background overlay slightly */}
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-3xl rounded-full"></div>
+
+                                            <div className="flex justify-between items-center mb-3">
+                                                <div className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider flex items-center gap-1.5">
+                                                    <Activity size={12} className="text-blue-400" />
+                                                    Resource Potential
+                                                </div>
+                                                <div className="text-[9px] uppercase tracking-wider bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/20 font-semibold shadow-inner">
+                                                    NASA Power API
+                                                </div>
+                                            </div>
+
+                                            {isClimateLoading ? (
+                                                <div className="flex justify-center items-center h-16 w-full animate-pulse">
+                                                    <div className="w-5 h-5 border-2 border-[var(--surface-border)] border-t-blue-500 rounded-full animate-spin"></div>
+                                                </div>
+                                            ) : climateData ? (
+                                                <div className="grid grid-cols-3 gap-2 relative z-10">
+                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm">
+                                                        <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Global Horizontal Irradiance">GHI</div>
+                                                        <div className="text-sm font-bold text-amber-500">{climateData.GHI}</div>
+                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5">kWh/m²/d</div>
+                                                    </div>
+                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm">
+                                                        <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Direct Normal Irradiance">DNI</div>
+                                                        <div className="text-sm font-bold text-amber-500">{climateData.DNI}</div>
+                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5">kWh/m²/d</div>
+                                                    </div>
+                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm">
+                                                        <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Wind Speed at 50m">Wind (50m)</div>
+                                                        <div className="text-sm font-bold text-emerald-400">{climateData.Wind_Speed_50m}</div>
+                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5">m/s</div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="text-xs text-[var(--text-muted)] h-16 flex items-center justify-center italic">
+                                                    Telemetry Unavailable
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

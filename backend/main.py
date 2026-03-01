@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -6,6 +6,7 @@ import database
 import models
 import schemas
 from typing import List
+import httpx
 
 # Wait to create tables until DB is configured via Postgres.app
 # models.Base.metadata.create_all(bind=database.engine)
@@ -175,3 +176,42 @@ def get_kpis_live():
             subtext=""
         )
     ]
+
+@app.get("/api/climate-data")
+async def get_climate_data(
+    lat: float = Query(..., description="Latitude of the location"),
+    lon: float = Query(..., description="Longitude of the location")
+):
+    """
+    Acts as a proxy connecting to the NASA POWER external API.
+    Used for the Global Solar Atlas implementation to render Solar GHI, DNI, and Wind Speed on the frontend map.
+    """
+    url = f"https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=ALLSKY_SFC_SW_DWN,ALLSKY_SFC_SW_DNI,WS50M&community=RE&longitude={lon}&latitude={lat}&format=JSON"
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, timeout=10.0)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Extract Annual Averages (ANN) from the NASA POWER response geometry
+            parameters = data.get("properties", {}).get("parameter", {})
+            ghi_annual = parameters.get("ALLSKY_SFC_SW_DWN", {}).get("ANN", "N/A")
+            dni_annual = parameters.get("ALLSKY_SFC_SW_DNI", {}).get("ANN", "N/A")
+            wind_annual = parameters.get("WS50M", {}).get("ANN", "N/A")
+            
+            return {
+                "latitude": lat,
+                "longitude": lon,
+                "GHI": ghi_annual,
+                "DNI": dni_annual,
+                "Wind_Speed_50m": wind_annual,
+                "units": {
+                    "GHI": "kWh/m^2/day",
+                    "DNI": "kWh/m^2/day",
+                    "Wind_Speed_50m": "m/s"
+                },
+                "source": "NASA Prediction Of Worldwide Energy Resources"
+            }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch climate data from NASA POWER: {str(e)}")
