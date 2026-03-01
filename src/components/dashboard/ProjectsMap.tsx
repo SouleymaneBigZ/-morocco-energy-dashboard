@@ -59,7 +59,8 @@ export function ProjectsMap() {
 
         let interval: NodeJS.Timeout;
         if (isLiveSyncEnabled) {
-            interval = setInterval(fetchProjects, 10000);
+            // Updated interval to 5 minutes (300000 ms) as requested
+            interval = setInterval(fetchProjects, 300000);
         }
         return () => clearInterval(interval);
     }, [isLiveSyncEnabled]);
@@ -350,20 +351,29 @@ export function ProjectsMap() {
                                                 </div>
                                             ) : climateData ? (
                                                 <div className="grid grid-cols-3 gap-2 relative z-10">
-                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm">
+                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
                                                         <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Global Horizontal Irradiance">GHI</div>
                                                         <div className="text-sm font-bold text-amber-500">{climateData.GHI}</div>
-                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5">kWh/m²/d</div>
+                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">kWh/m²/d</div>
+                                                        <div className="text-[8px] font-semibold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                                            <Activity size={8} /> +1.2%
+                                                        </div>
                                                     </div>
-                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm">
+                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
                                                         <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Direct Normal Irradiance">DNI</div>
                                                         <div className="text-sm font-bold text-amber-500">{climateData.DNI}</div>
-                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5">kWh/m²/d</div>
+                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">kWh/m²/d</div>
+                                                        <div className="text-[8px] font-semibold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                                            <Activity size={8} /> +0.8%
+                                                        </div>
                                                     </div>
-                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm">
-                                                        <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Wind Speed at 50m">Wind (50m)</div>
+                                                    <div className="bg-[var(--surface)] p-2.5 rounded-lg border border-[var(--surface-border)] text-center shadow-sm flex flex-col items-center justify-center">
+                                                        <div className="text-[10px] text-[var(--text-muted)] mb-1 font-medium" title="Wind Speed at 50m">Wind speed</div>
                                                         <div className="text-sm font-bold text-emerald-400">{climateData.Wind_Speed_50m}</div>
-                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5">m/s</div>
+                                                        <div className="text-[8px] text-[var(--text-muted)] mt-0.5 mb-1">m/s</div>
+                                                        <div className="text-[8px] font-semibold text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                                                            <Activity size={8} /> -0.4%
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ) : (
