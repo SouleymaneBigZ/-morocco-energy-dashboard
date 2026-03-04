@@ -89,3 +89,6 @@ class FinancialData(Base):
     category = Column(String)
     amountBillionUSD = Column(Float)
     color = Column(String)
+    source = Column(String, nullable=True)       # Official source citation
+    year = Column(Integer, nullable=True)        # Reference year for the data
+    yoy_growth_pct = Column(Float, nullable=True) # Year-over-year growth %

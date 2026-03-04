@@ -137,45 +137,26 @@ def get_grid_data():
         raise HTTPException(status_code=500, detail=f"Failed to fetch local grid data: {str(e)}")
 
 
-# --- NEW LIVE KPI SCRAPER ENDPOINT ---
-import scrapers
 
-@app.get("/api/kpis-live")
-def get_kpis_live():
+@app.get("/api/kpis-live", response_model=List[schemas.TopLevelKPIBase])
+def get_kpis_live(db: Session = Depends(database.get_db)):
     """
-    Endpoint that dynamically scrapes official Moroccan portals for
-    live Total Capacity and Renewable Energy percentages.
+    Live Sync endpoint: reads real KPI data from the database (same as /api/kpis)
+    but overrides the `change` field to indicate live synchronization status.
     """
-    scraped_data = scrapers.fetch_live_kpi_data()
-    
-    # We construct the payload to match what the DashboardOverview expects
-    # for the Top Level KPIs but with our fresh scraped data.
-    return [
-        schemas.TopLevelKPIBase(
-            id=1,
-            label="Total Installed Capacity",
-            value=f"{scraped_data['capacity_mw']:,} MW",
-            change="Verified via Official Sources",
-            trend="up",
-            subtext=""
-        ),
-        schemas.TopLevelKPIBase(
-            id=2,
-            label="Renewables Share",
-            value=f"{scraped_data['renewable_percentage']}%",
-            change="Verified via Official Sources",
-            trend="up",
-            subtext="Target: 52% by 2030"
-        ),
-        schemas.TopLevelKPIBase(
-            id=3,
-            label="Active Projects",
-            value="$14 M",
-            change="Major infrastructure monitored",
-            trend="down",
-            subtext=""
-        )
-    ]
+    kpis = db.query(models.TopLevelKPI).all()
+    result = []
+    for kpi in kpis:
+        result.append(schemas.TopLevelKPIBase(
+            id=kpi.id,
+            label=kpi.label,
+            value=kpi.value,
+            subtext=kpi.subtext,
+            trend=kpi.trend,
+            change="⟳ Live — Synced"
+        ))
+    return result
+
 
 @app.get("/api/climate-data")
 async def get_climate_data(

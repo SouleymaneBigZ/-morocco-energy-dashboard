@@ -71,6 +71,7 @@ class TopLevelKPIBase(BaseModel):
     value: str
     subtext: str
     trend: str
+    change: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -89,6 +90,10 @@ class FinancialDataBase(BaseModel):
     category: str
     amountBillionUSD: float
     color: str
+    source: Optional[str] = None
+    year: Optional[int] = None
+    yoy_growth_pct: Optional[float] = None
 
     class Config:
         from_attributes = True
+

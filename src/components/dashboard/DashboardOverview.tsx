@@ -90,6 +90,12 @@ export function DashboardOverview() {
                     <h1 className="text-3xl font-bold text-white mb-1">National Energy Overview</h1>
                     <p className="text-[var(--text-muted)]">Moroccan energy transition performance and key metrics</p>
                 </div>
+                {isLiveSyncEnabled && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        LIVE SYNC ACTIVE
+                    </div>
+                )}
             </div>
 
             {/* KPI Cards */}
@@ -108,10 +114,17 @@ export function DashboardOverview() {
 
                         <div className="flex items-center gap-3">
                             <h2 className="text-3xl font-bold text-white tracking-tight shrink-0">{kpi.value}</h2>
-                            <span className={`flex items-start text-xs font-semibold ${kpi.trend === 'up' ? 'text-emerald-400' : 'text-red-400'}`}>
-                                {kpi.trend === 'up' ? <ArrowUpRight size={14} className="mr-1 shrink-0 mt-0.5" /> : <ArrowDownRight size={14} className="mr-1 shrink-0 mt-0.5" />}
-                                <span className="leading-tight">{kpi.change}</span>
-                            </span>
+                            {kpi.trend === 'up' ? (
+                                <span className="flex items-start text-xs font-semibold text-emerald-400">
+                                    <ArrowUpRight size={14} className="mr-1 shrink-0 mt-0.5" />
+                                    <span className="leading-tight">{kpi.change ?? ''}</span>
+                                </span>
+                            ) : (
+                                <span className="flex items-start text-xs font-semibold text-red-400">
+                                    <ArrowDownRight size={14} className="mr-1 shrink-0 mt-0.5" />
+                                    <span className="leading-tight">{kpi.change ?? ''}</span>
+                                </span>
+                            )}
                         </div>
                         {kpi.subtext && (
                             <div className="mt-3 text-xs text-[var(--text-muted)] font-medium">

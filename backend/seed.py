@@ -94,13 +94,93 @@ if db.query(HistoricalGrowth).count() == 0:
 
 if db.query(FinancialData).count() == 0:
     financials = [
-        FinancialData(category="Wind Power", amountBillionUSD=3.6, color="#10B981"),
-        FinancialData(category="Solar Power", amountBillionUSD=3.0, color="#F59E0B"),
-        FinancialData(category="Grid Infrastructure", amountBillionUSD=2.3, color="#8B5CF6"),
-        FinancialData(category="Hydro & Pumped Storage", amountBillionUSD=1.5, color="#3B82F6"),
-        FinancialData(category="Green Hydrogen Init.", amountBillionUSD=1.0, color="#06B6D4"),
+        # --- Secteurs d'investissement actifs (2023-2027) ---
+        # Source: ONEE Plan 2030 (MAD 90B ≈ $8.9B pour 9 GW, 2023-2027)
+        FinancialData(
+            category="Wind Power",
+            amountBillionUSD=3.8,
+            color="#10B981",
+            source="ONEE / MASEN — Plan 2023-2027",
+            year=2024,
+            yoy_growth_pct=5.6
+        ),
+        # Source: MASEN Noor Complex + Midelt I/II/III pipeline
+        FinancialData(
+            category="Solar Power",
+            amountBillionUSD=3.2,
+            color="#F59E0B",
+            source="MASEN — Noor Complex & Midelt pipeline",
+            year=2024,
+            yoy_growth_pct=6.7
+        ),
+        # Source: EIB + KfW €300M (2024-2029) + ONEE grid expansion
+        FinancialData(
+            category="Grid Infrastructure",
+            amountBillionUSD=2.8,
+            color="#8B5CF6",
+            source="EIB & KfW — Grid Expansion 2024-2029 (€300M)",
+            year=2025,
+            yoy_growth_pct=21.7
+        ),
+        # Source: STEP Abdelmoumen + World Bank Ifahsa STEP ($210M)
+        FinancialData(
+            category="Hydro & Pumped Storage",
+            amountBillionUSD=1.8,
+            color="#3B82F6",
+            source="World Bank — Ifahsa STEP ($210M) + ONEE Abdelmoumen",
+            year=2025,
+            yoy_growth_pct=20.0
+        ),
+        # Source: 6 green H2 projects approved March 2025 (MAD 319B = $32.5B total pipeline)
+        # Dashboard shows committed/near-term tranche
+        FinancialData(
+            category="Green Hydrogen",
+            amountBillionUSD=2.1,
+            color="#06B6D4",
+            source="Govt. — 6 projects approved Mar 2025 (MAD 319B pipeline)",
+            year=2025,
+            yoy_growth_pct=110.0
+        ),
+        # --- Nouveaux financements 2025 ---
+        # Source: EIB Annual Report 2024 — €500M to Morocco (+56% vs 2023)
+        FinancialData(
+            category="EIB — Climate & RE Package",
+            amountBillionUSD=0.55,
+            color="#34D399",
+            source="EIB — Annual Report 2024 (€500M, +56% YoY)",
+            year=2024,
+            yoy_growth_pct=56.0
+        ),
+        # Source: KfW Dec 2024 — Green H2A platform (€13.5M)
+        FinancialData(
+            category="KfW — Green H2A Platform",
+            amountBillionUSD=0.015,
+            color="#67E8F9",
+            source="KfW — Green H2A Agreement Dec 2024 (€13.5M)",
+            year=2024,
+            yoy_growth_pct=None
+        ),
+        # Source: World Bank FY2025 — $1.77B total, incl. $200M climate resilience
+        FinancialData(
+            category="World Bank — Climate Resilience",
+            amountBillionUSD=0.20,
+            color="#60A5FA",
+            source="World Bank — FY2025 Morocco Portfolio ($1.77B total)",
+            year=2025,
+            yoy_growth_pct=None
+        ),
+        # Source: MASEN/ONEE — 800MW tender (500MW wind + 300MW solar+storage, MAD 9B+)
+        FinancialData(
+            category="MASEN/ONEE — 800 MW Tender",
+            amountBillionUSD=0.9,
+            color="#A78BFA",
+            source="MASEN & ONEE — Nov 2025 tender (500MW wind + 300MW solar+storage)",
+            year=2025,
+            yoy_growth_pct=None
+        ),
     ]
     db.add_all(financials)
+
 
 if db.query(RegulatoryUpdate).count() == 0:
     updates = [
