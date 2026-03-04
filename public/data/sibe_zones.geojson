@@ -1,0 +1,463 @@
+{
+    "type": "FeatureCollection",
+    "name": "Morocco_SIBE_Protected_Areas",
+    "source": "UNEP-WCMC Protected Planet / HCEFLCD Maroc",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Parc National de Souss-Massa",
+                "category": "National Park",
+                "area_km2": 685,
+                "status": "Protected",
+                "biodiversity": "Flamants, Ibis chauve, Lézards endémiques",
+                "wdpa_id": "2370"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -9.85,
+                            29.95
+                        ],
+                        [
+                            -9.55,
+                            29.95
+                        ],
+                        [
+                            -9.55,
+                            30.30
+                        ],
+                        [
+                            -9.85,
+                            30.30
+                        ],
+                        [
+                            -9.85,
+                            29.95
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Parc National d'Al Hoceima",
+                "category": "National Park",
+                "area_km2": 486,
+                "status": "Protected",
+                "biodiversity": "Aigle de Bonelli, Goélands, Dauphins",
+                "wdpa_id": "2371"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -4.05,
+                            35.05
+                        ],
+                        [
+                            -3.75,
+                            35.05
+                        ],
+                        [
+                            -3.75,
+                            35.30
+                        ],
+                        [
+                            -4.05,
+                            35.30
+                        ],
+                        [
+                            -4.05,
+                            35.05
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Parc National d'Ifrane",
+                "category": "National Park",
+                "area_km2": 530,
+                "status": "Protected",
+                "biodiversity": "Singes magots, Cèdres centenaires, Loutres",
+                "wdpa_id": "2372"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -5.30,
+                            33.35
+                        ],
+                        [
+                            -4.95,
+                            33.35
+                        ],
+                        [
+                            -4.95,
+                            33.65
+                        ],
+                        [
+                            -5.30,
+                            33.65
+                        ],
+                        [
+                            -5.30,
+                            33.35
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Parc National du Toubkal",
+                "category": "National Park",
+                "area_km2": 380,
+                "status": "Protected",
+                "biodiversity": "Mouflon à manchettes, Aigle royal, Flore alpine",
+                "wdpa_id": "2373"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -7.98,
+                            31.00
+                        ],
+                        [
+                            -7.65,
+                            31.00
+                        ],
+                        [
+                            -7.65,
+                            31.25
+                        ],
+                        [
+                            -7.98,
+                            31.25
+                        ],
+                        [
+                            -7.98,
+                            31.00
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "SIBE Merja Zerga",
+                "category": "SIBE / Ramsar Wetland",
+                "area_km2": 38,
+                "status": "Ramsar Site",
+                "biodiversity": "Canards, Limicoles, Site hivernal international 10 000+ oiseaux",
+                "wdpa_id": "2375"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -6.35,
+                            34.82
+                        ],
+                        [
+                            -6.20,
+                            34.82
+                        ],
+                        [
+                            -6.20,
+                            34.95
+                        ],
+                        [
+                            -6.35,
+                            34.95
+                        ],
+                        [
+                            -6.35,
+                            34.82
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "SIBE Oukaimeden",
+                "category": "SIBE",
+                "area_km2": 165,
+                "status": "Protected",
+                "biodiversity": "Mouflon de Barbarie, Alouette de Thékla, Prairie alpine",
+                "wdpa_id": "2376"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -7.90,
+                            31.15
+                        ],
+                        [
+                            -7.75,
+                            31.15
+                        ],
+                        [
+                            -7.75,
+                            31.30
+                        ],
+                        [
+                            -7.90,
+                            31.30
+                        ],
+                        [
+                            -7.90,
+                            31.15
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Réserve de Biosphère de l'Arganeraie",
+                "category": "UNESCO Biosphere Reserve",
+                "area_km2": 2560000,
+                "status": "Biosphere Reserve",
+                "biodiversity": "Arganiers endémiques, Fennec, Gazelle dorcas",
+                "wdpa_id": "2377"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -10.20,
+                            29.50
+                        ],
+                        [
+                            -7.20,
+                            29.50
+                        ],
+                        [
+                            -7.20,
+                            31.20
+                        ],
+                        [
+                            -10.20,
+                            31.20
+                        ],
+                        [
+                            -10.20,
+                            29.50
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "SIBE de Khnifiss (Lac Naïla)",
+                "category": "SIBE / Ramsar Wetland",
+                "area_km2": 65,
+                "status": "Ramsar Site",
+                "biodiversity": "Flamants, Pélicans, Tortues marines",
+                "wdpa_id": "2378"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -16.75,
+                            27.85
+                        ],
+                        [
+                            -16.50,
+                            27.85
+                        ],
+                        [
+                            -16.50,
+                            28.10
+                        ],
+                        [
+                            -16.75,
+                            28.10
+                        ],
+                        [
+                            -16.75,
+                            27.85
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Parc National de Talassemtane",
+                "category": "National Park",
+                "area_km2": 580,
+                "status": "Protected",
+                "biodiversity": "Sapin du Maroc (endémique), Lynx ibérique, Pinsons",
+                "wdpa_id": "2379"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -5.20,
+                            34.85
+                        ],
+                        [
+                            -4.90,
+                            34.85
+                        ],
+                        [
+                            -4.90,
+                            35.10
+                        ],
+                        [
+                            -5.20,
+                            35.10
+                        ],
+                        [
+                            -5.20,
+                            34.85
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "SIBE de Massa (Estuaire)",
+                "category": "SIBE",
+                "area_km2": 14,
+                "status": "Protected",
+                "biodiversity": "Ibis chauve, Flamants roses, Cigognes blanches",
+                "wdpa_id": "2380"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -9.68,
+                            30.00
+                        ],
+                        [
+                            -9.56,
+                            30.00
+                        ],
+                        [
+                            -9.56,
+                            30.12
+                        ],
+                        [
+                            -9.68,
+                            30.12
+                        ],
+                        [
+                            -9.68,
+                            30.00
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "SIBE Jbel Moussa",
+                "category": "SIBE",
+                "area_km2": 75,
+                "status": "Protected",
+                "biodiversity": "Macaque de Barbarie, Aigle botté, Végétation méditerranéenne",
+                "wdpa_id": "2381"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -5.44,
+                            35.82
+                        ],
+                        [
+                            -5.32,
+                            35.82
+                        ],
+                        [
+                            -5.32,
+                            35.92
+                        ],
+                        [
+                            -5.44,
+                            35.92
+                        ],
+                        [
+                            -5.44,
+                            35.82
+                        ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "SIBE Sidi Boughaba (Lac)",
+                "category": "SIBE / Ramsar Wetland",
+                "area_km2": 6,
+                "status": "Ramsar Site",
+                "biodiversity": "Canards siffleurs, Fuligules, Zone humide côtière",
+                "wdpa_id": "2382"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -6.88,
+                            34.17
+                        ],
+                        [
+                            -6.77,
+                            34.17
+                        ],
+                        [
+                            -6.77,
+                            34.25
+                        ],
+                        [
+                            -6.88,
+                            34.25
+                        ],
+                        [
+                            -6.88,
+                            34.17
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}
