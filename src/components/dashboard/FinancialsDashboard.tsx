@@ -150,8 +150,9 @@ export function FinancialsDashboard() {
                                 layout="vertical"
                                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                                 onClick={(data) => {
-                                    if (data && data.activePayload && data.activePayload[0]) {
-                                        setSelectedItem(data.activePayload[0].payload as FinancialItem);
+                                    const d = data as unknown as { activePayload?: { payload: FinancialItem }[] };
+                                    if (d && d.activePayload && d.activePayload[0]) {
+                                        setSelectedItem(d.activePayload[0].payload);
                                     }
                                 }}
                             >
