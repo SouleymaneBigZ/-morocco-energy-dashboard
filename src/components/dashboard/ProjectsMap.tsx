@@ -42,7 +42,7 @@ export function ProjectsMap() {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/projects');
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/projects`);
                 if (response.ok) {
                     const data = await response.json();
                     setKeyProjects(data);
@@ -59,7 +59,7 @@ export function ProjectsMap() {
 
         const fetchGridData = async () => {
             try {
-                const res = await fetch('http://localhost:8000/api/grid-data');
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/grid-data`);
                 if (res.ok) {
                     const gridFeatureCollection = await res.json();
                     setGridLines(gridFeatureCollection.features || []);
@@ -71,7 +71,7 @@ export function ProjectsMap() {
 
         const fetchSibeZones = async () => {
             try {
-                const res = await fetch('http://localhost:8000/api/sibe-zones');
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/sibe-zones`);
                 if (res.ok) {
                     const data = await res.json();
                     setSibeZones(data);
@@ -100,7 +100,7 @@ export function ProjectsMap() {
             setIsClimateLoading(true);
             setClimateData(null);
             try {
-                const res = await fetch(`http://localhost:8000/api/climate-data?lat=${selectedProject.latitude}&lon=${selectedProject.longitude}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/climate-data?lat=${selectedProject.latitude}&lon=${selectedProject.longitude}`);
                 if (res.ok) {
                     const data = await res.json();
                     setClimateData(data);
@@ -116,7 +116,7 @@ export function ProjectsMap() {
         const fetchSingleWaterStress = async () => {
             if (!waterStressScores[selectedProject.id]) {
                 try {
-                    const res = await fetch(`http://localhost:8000/api/water-stress?lat=${selectedProject.latitude}&lon=${selectedProject.longitude}`);
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/water-stress?lat=${selectedProject.latitude}&lon=${selectedProject.longitude}`);
                     if (res.ok) {
                         const data = await res.json();
                         setWaterStressScores(prev => ({ ...prev, [selectedProject.id]: data }));
@@ -136,7 +136,7 @@ export function ProjectsMap() {
         if (showWaterStress && Object.keys(waterStressScores).length < keyProjects.length) {
             setIsFetchingWaterStress(true);
             Promise.all(keyProjects.map(p =>
-                fetch(`http://localhost:8000/api/water-stress?lat=${p.latitude}&lon=${p.longitude}`)
+                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/water-stress?lat=${p.latitude}&lon=${p.longitude}`)
                     .then(res => res.json())
                     .then(data => ({ id: p.id, data }))
                     .catch(() => ({ id: p.id, data: null }))
@@ -429,7 +429,7 @@ export function ProjectsMap() {
                                                         <Droplet size={14} className="text-cyan-400" /> WRI Aqueduct Score
                                                     </div>
                                                     <div className="flex items-center gap-4 text-white/80 text-xs">
-                                                        <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-500"></span> >4 (Ext)</div>
+                                                        <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-500"></span> &gt;4 (Ext)</div>
                                                         <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-orange-500"></span> 3-4 (High)</div>
                                                         <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span> 2-3 (Med)</div>
                                                         <div className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> &lt;2 (Low)</div>
@@ -582,9 +582,9 @@ export function ProjectsMap() {
                                                     <div className="flex items-baseline gap-2">
                                                         <span className="text-lg font-bold text-white">{waterStressScores[selectedProject.id].bws_score}</span>
                                                         <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded border ${waterStressScores[selectedProject.id].bws_score >= 4 ? "bg-red-500/20 text-red-400 border-red-500/30" :
-                                                                waterStressScores[selectedProject.id].bws_score >= 3 ? "bg-orange-500/20 text-orange-400 border-orange-500/30" :
-                                                                    waterStressScores[selectedProject.id].bws_score >= 2 ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" :
-                                                                        "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                                                            waterStressScores[selectedProject.id].bws_score >= 3 ? "bg-orange-500/20 text-orange-400 border-orange-500/30" :
+                                                                waterStressScores[selectedProject.id].bws_score >= 2 ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" :
+                                                                    "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
                                                             }`}>
                                                             {waterStressScores[selectedProject.id].bws_label}
                                                         </span>
@@ -615,8 +615,8 @@ export function ProjectsMap() {
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-xs font-mono text-[var(--text-muted)]">{Math.round(nearest.distance)} km away</span>
                                                                 <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded border ${isCritical ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-                                                                        isWarning ? 'bg-amber-500/20 text-amber-500 border-amber-500/30' :
-                                                                            'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                                                                    isWarning ? 'bg-amber-500/20 text-amber-500 border-amber-500/30' :
+                                                                        'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                                                                     }`}>
                                                                     {isCritical ? 'BUFFER ZONE' : isWarning ? 'MONITOR' : 'SAFE DISTANCE'}
                                                                 </span>

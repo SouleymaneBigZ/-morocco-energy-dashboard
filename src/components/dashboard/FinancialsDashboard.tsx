@@ -33,7 +33,7 @@ export function FinancialsDashboard() {
 
     const fetchFinancials = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/financials');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/financials`);
             if (response.ok) {
                 const data: FinancialItem[] = await response.json();
                 setInvestmentDistribution(data);

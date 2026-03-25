@@ -51,8 +51,8 @@ export function MarketEvaluationDashboard() {
     const fetchData = useCallback(async () => {
         try {
             const [marketRes, reformsRes] = await Promise.all([
-                fetch("http://127.0.0.1:8000/api/market-data"),
-                fetch("http://127.0.0.1:8000/api/reforms")
+                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/market-data`),
+                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/reforms`)
             ]);
             if (marketRes.ok && reformsRes.ok) {
                 setMarketData(await marketRes.json());

@@ -36,13 +36,13 @@ export function DashboardOverview() {
             try {
                 // If the user has "Live Sync" toggled on, fetch from the real-time Python Web Scraper proxy.
                 // Else fall back to the resilient Postgres local database snapshots.
-                const kpisEndpoint = isLiveSyncEnabled ? 'http://localhost:8000/api/kpis-live' : 'http://localhost:8000/api/kpis';
+                const kpisEndpoint = isLiveSyncEnabled ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/kpis-live` : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/kpis`;
 
                 const [kpisRes, mixRes, growthRes, projectsRes] = await Promise.all([
                     fetch(kpisEndpoint),
-                    fetch('http://localhost:8000/api/generation-mix'),
-                    fetch('http://localhost:8000/api/historical-growth'),
-                    fetch('http://localhost:8000/api/projects')
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/generation-mix`),
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/historical-growth`),
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/projects`)
                 ]);
 
                 if (kpisRes.ok && mixRes.ok && growthRes.ok && projectsRes.ok) {
