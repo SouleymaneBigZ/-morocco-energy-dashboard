@@ -168,8 +168,8 @@ export function FinancialsDashboard() {
                                         color: 'white',
                                         backdropFilter: 'blur(8px)'
                                     }}
-                                    formatter={(value: number, _name: string, props: { payload: FinancialItem }) => [
-                                        `$${value} Billion${props.payload.year ? ` (${props.payload.year})` : ''}`,
+                                    formatter={(value: any, _name: any, props: any) => [
+                                        `$${value} Billion${props?.payload?.year ? ` (${props.payload.year})` : ''}`,
                                         'Investment'
                                     ]}
                                 />
