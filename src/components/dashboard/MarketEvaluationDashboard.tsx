@@ -158,9 +158,9 @@ export function MarketEvaluationDashboard() {
                                 <Tooltip
                                     cursor={{ fill: 'var(--surface)' }}
                                     contentStyle={{ backgroundColor: 'var(--glass-bg)', borderColor: 'var(--surface-border)', borderRadius: '12px', color: 'white' }}
-                                    formatter={(value: number, _: string, props: { payload: { label: string } }) => [
+                                    formatter={(value: any, _: any, props: any) => [
                                         `$${value} / MWh`,
-                                        props.payload.label
+                                        props?.payload?.label || 'Tariff'
                                     ]}
                                 />
                                 <Bar dataKey="cost" radius={[4, 4, 0, 0]} barSize={44}>
