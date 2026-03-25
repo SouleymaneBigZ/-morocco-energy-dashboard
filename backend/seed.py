@@ -9,9 +9,7 @@ with engine.connect() as conn:
     conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
     conn.commit()
 
-# Drop the MarketData table explicitly so it is recreated with the new columns
-MarketData.__table__.drop(engine, checkfirst=True)
-ReformTracker.__table__.drop(engine, checkfirst=True)
+# Drop lines removed for safe production seeding
 
 # Create tables
 Base.metadata.create_all(bind=engine)

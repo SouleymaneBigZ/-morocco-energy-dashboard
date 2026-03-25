@@ -13,6 +13,14 @@ import httpx
 
 app = FastAPI(title="Morocco Energy API", version="1.0.0")
 
+@app.on_event("startup")
+def startup_event():
+    models.Base.metadata.create_all(bind=database.engine)
+    try:
+        import seed
+    except Exception as e:
+        print(f"Error during database seeding: {e}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
