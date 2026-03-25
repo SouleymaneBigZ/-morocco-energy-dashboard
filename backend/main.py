@@ -15,7 +15,6 @@ app = FastAPI(title="Morocco Energy API", version="1.0.0")
 
 @app.on_event("startup")
 def startup_event():
-    models.Base.metadata.create_all(bind=database.engine)
     try:
         import seed
     except Exception as e:
